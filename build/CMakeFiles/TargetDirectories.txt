@@ -1,0 +1,3 @@
+/home/ben/Desktop/KramersNew/build/CMakeFiles/rebuild_cache.dir
+/home/ben/Desktop/KramersNew/build/CMakeFiles/edit_cache.dir
+/home/ben/Desktop/KramersNew/build/CMakeFiles/colnoise.dir

@@ -1,0 +1,106 @@
+physical settings:
+k_b = 1
+mass = 4
+temperature = 1
+D = 1.88562
+tau = 1
+a = 3.1
+chi = 6
+
+statistical/program settings:
+t0 = 0
+t1 = 1
+tSettling = 100
+timeSettled = 0.333333
+nStepsFactor = 1
+nStepsTwo = 15
+nSteps = 32768
+npTen = 0
+npTwo = 3
+np = 8
+optimisationsBool = 1
+gPrecisionTen = -3
+gPrecision = 0.001
+dPrecisionTen = -3
+dPrecision = 0.001
+maxThreadNumber = 24
+maximumAllocationMemory = 60
+saveAllDataBool = 0
+avOpt = 1
+avNum = 1
+
+corrFuncNr = 0
+potNr = 0
+noiseNr = 1
+sdeSolverNr = 0
+Kramers = 0
+initCondNr = 0
+
+potential settings:
+potw = 1
+potK = -4
+potDepth = 2
+potWidth = 4
+
+potB = 2
+potC = -2
+pota = 1
+potMy = 2
+potNy = 0
+potStartDepth = 5
+potEndDepth = 0.5
+potStartTime = 1
+potEndTime = 5
+
+xc = 10
+xb = 16
+Ub = 2
+
+energy animation (ea) settings:
+eaBool = 0
+eaPotTimeDependant = 0
+fps = 1
+eaStride = 32768
+eaPotentialN = 100
+eaPotBorderL = -8
+eaPotBorderR = 8
+
+random number generator:
+T = 0x7f5666ad8c20
+rng = 0x1dae3c0
+seed = 1503476874
+
+Initial conditions:
+x0 = 10
+v0 = 0
+potB1 = 6.91737e-310
+aWhite = 0
+aColoured = 6.95273e-310
+potB_eff = 6.91737e-310
+rxborder = 6.91737e-310
+lxborder = 0
+
+transition options:
+transition = 0
+npoints = 10
+
+Position distribution animation(pda):
+pdaBool = 0
+pdaStride = 32768
+pDistRangeBeg = -10
+pDistRangeEnd = 10
+pDistNBins = 2
+pDistStartTime = 0.333333
+
+Velocity distribution animation(pda):
+vdaBool = 0
+vdaStride = 32768
+vDistRangeBeg = -15
+vDistRangeEnd = 15
+vDistNBins = 2
+vDistStartTime = 0.333333
+
+dt = 3.05176e-05
+gamma = 0.942809
+nSettling = 4194304
+nFourier = 67108864
