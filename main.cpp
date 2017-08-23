@@ -89,8 +89,8 @@ int main(int argc, char** argv) {  //argc: 1, argv[0]: ./colnoise
 
 	SimulationOptions so;
         Filenames filenames;
-	Foldernames foldernames("test", so);
-// 	Foldernames foldernames(currentDateString, so);
+//	Foldernames foldernames("test", so);
+ 	Foldernames foldernames(currentDateString, so);
 
 	if (printWarning(so) == -1){
 		return -1;
