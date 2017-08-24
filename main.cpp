@@ -109,7 +109,7 @@ int main(int argc, char** argv) {  //argc: 1, argv[0]: ./colnoise
 	writeToFile(noiseDiss.tGVec, noiseDiss.G, filenames.fourier, headerString, foldernames.main);
 	writeToFile(results.tVec, noiseDiss.dispKernel, filenames.dispKernel, headerString, foldernames.main);
          
-// 	  fstream velocDist;
+// 	  fstream velocDist;h
 //           velocDist.open("velocDist.dat", ios::out);
 //           for(int k=0; k < results.v0Vec.size(); k++)
 //             {
