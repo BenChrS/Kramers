@@ -1,4 +1,6 @@
 # ignoriert alle Dateien im build/ Verzeichnis
 build/
+build/execute.sh
+build/input.txt
 build_readme.txt
 infoFile.txt
