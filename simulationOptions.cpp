@@ -86,8 +86,8 @@ void SimulationOptions::setInitValues(){
 	//physical settings
 	this->k_b = 1; // k_boltzmann constant
 	this->temperature = 1.0; //2.0
-	this->mass =2.0*this->temperature; //1.0; //mass of particle
-	//this->D = 0.108;
+	this->mass =0.1*this->temperature; //1.0; //mass of particle
+	this->D = 2.0;
         //this->tau = 5; // see paper /only important for first correlation function
 	//this->a = 7.6; // only important for second correlation function
 	//this->chi=3.5;//correlation time for third correlation function
@@ -157,8 +157,8 @@ void SimulationOptions::setInitValues(){
 	cout << "omegaB: " << sqrt(4*this->Ub/(this->mass*pow((this->xb-this->xc),2.0))) << endl;
 	cout << "m*omegaB: " << this->mass*pow(sqrt(4*this->Ub/(this->mass*pow((this->xb-this->xc),2.0))),2.0) << endl;
 	
-	this->D = 2*this->k_b*this->temperature*this->mass*sqrt(4*this->Ub/(this->mass*pow((this->xb-this->xc),2.0)));   //nur zum check des Skalierungsverhalten von Kramersrate, Wieder auskommentieren später
-	cout << "D: " << 2*this->k_b*this->temperature*this->mass*sqrt(4*this->Ub/(this->mass*pow((this->xb-this->xc),2.0))) << endl;
+	//this->D = 2*this->k_b*this->temperature*this->mass*sqrt(4*this->Ub/(this->mass*pow((this->xb-this->xc),2.0)));   //nur zum check des Skalierungsverhalten von Kramersrate, Wieder auskommentieren später
+	//cout << "D: " << 2*this->k_b*this->temperature*this->mass*sqrt(4*this->Ub/(this->mass*pow((this->xb-this->xc),2.0))) << endl;
 
 	//energy animation (ea) settings
 	this->eaBool = false; // energy Animation?

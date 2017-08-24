@@ -1,0 +1,4 @@
+# ignoriert alle Dateien im build/ Verzeichnis
+build/
+build_readme.txt
+infoFile.txt
