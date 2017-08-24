@@ -1204,7 +1204,7 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 	{
 	  vector<double> kinEnergyTheo(so.nSteps, 0.0);
 	  calcKinEnergyTheo(kinEnergyTheo, results.tVec, so.temperature, so.mass, so.D, so.tau, so.k_b);
-	  //writeToFile(results.tVec, kinEnergyTheo, filenames.kinEnergyTheo, headerString, foldernames.main);
+	  writeToFile(results.tVec, kinEnergyTheo, filenames.kinEnergyTheo, headerString, foldernames.main);
 	}
 	else if (so.potNr == 0 && so.noiseNr == 2)
 	{
