@@ -174,6 +174,7 @@ string fileNameLong = "";
                 <<"tau"<<" = "<<so.tau<<endl
                 <<"a"<<" = "<<so.a<<endl
                 <<"chi"<<" = "<<so.chi<<endl
+                <<"alpha"<<" = " << so.alpha << endl
                 <<endl
                 <<"statistical/program settings:"<<endl
                 <<"t0"<<" = "<<so.t0<<endl

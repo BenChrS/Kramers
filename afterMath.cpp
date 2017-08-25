@@ -742,7 +742,7 @@ void calcKinEnergyTheo(vector<double>& vec, const vector<double>& tVec, const do
     double omega = sqrt(2*Q*tau-1)/(2*tau);
     for (int i = 0; i < tVec.size(); i++)
     {
-      vec.at(i) = k*temperature/mass-k*temperature/(mass*2*Q*tau)*(Q*tau+sqrt(2*Q*tau-1)*sin(2*omega*tVec.at(i))
+      vec.at(i) = k*temperature/mass-k*temperature/(mass*(2*Q*tau-1))*(Q*tau+sqrt(2*Q*tau-1)*sin(2*omega*tVec.at(i))
 		      + (Q*tau-1)*cos(2*omega*tVec.at(i)))*exp(-tVec.at(i)/tau);
     }
   }
@@ -868,14 +868,14 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
     
 	//!!!!!!!!!!!1Grenzwert der mittleren kinetische Energie  für masselose Theore (analytisch)!!!!!!!!!!!!!!!
 	//
-// 	fstream Energy;
-//          Energy.open("kinEnergy.dat", ios::out);
-//          double v2;
-//          v2=9.0/25.0*so.temperature/so.mass+16.0/25.0*pow(so.v0,2.0);
-//          for (int i=0; i<results.tVec.size();i++)
-// 	 {
-// 	   Energy << results.tVec.at(i) << " " << 1.0/2.0*so.mass*v2 << endl;
-// 	 }
+	fstream Energy;
+         Energy.open("kinEnergy.dat", ios::out);
+         double v2;
+         v2=9.0/25.0*so.temperature/so.mass+16.0/25.0*pow(so.v0,2.0);
+         for (int i=0; i<results.tVec.size();i++)
+	 {
+	   Energy << results.tVec.at(i) << " " << 1.0/2.0*so.mass*v2 << endl;
+	 }
 	 ///
 	 
 	 

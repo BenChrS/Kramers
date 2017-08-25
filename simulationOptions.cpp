@@ -86,8 +86,8 @@ void SimulationOptions::setInitValues(){
 	//physical settings
 	this->k_b = 1; // k_boltzmann constant
 	this->temperature = 1.0; //2.0
-	this->mass =0.1*this->temperature; //1.0; //mass of particle
-	this->D = 2.0;
+	this->mass =1*this->temperature; //1.0; //mass of particle
+	this->D = 10; //note: shouldn't influence evolution related to correlation function 3
         //this->tau = 5; // see paper /only important for first correlation function
 	//this->a = 7.6; // only important for second correlation function
 	//this->chi=3.5;//correlation time for third correlation function
@@ -95,11 +95,11 @@ void SimulationOptions::setInitValues(){
 
 	//statistical/program settings
  	this->t0 = 0.0; //time interval [t0, t1]
-        this->t1 = 1.0;     //1.0: für kb*T=0.5 Limes
+        this->t1 = 30.0;     //1.0: für kb*T=0.5 Limes
 	this->tSettling = 100.0; // time needed for I(t) to be approximately 0
 	this->timeSettled = (this->t1-this->t0)/3.0; //approximate time particles need to be in equilibrium - only important for kinetic Energy Average - not yet in external call
-        this->nStepsFactor = 1;//round(this->t1-this->t0);
-        this->nStepsTwo = 15;   //15: für kb*T=0.5 Limes
+        this->nStepsFactor = 30;//round(this->t1-this->t0);
+        this->nStepsTwo = 7;   //15: für kb*T=0.5 Limes
 	this->nSteps = nStepsFactor*pow(2, this->nStepsTwo); // number of final datapos (stored), must be devidable by 2
         //this->npTen=4;
         //this->npTwo=0;
@@ -154,8 +154,8 @@ void SimulationOptions::setInitValues(){
 	this->xb=1.6*this->xc;
 	this->Ub=2*this->k_b*this->temperature;
 	
-	cout << "omegaB: " << sqrt(4*this->Ub/(this->mass*pow((this->xb-this->xc),2.0))) << endl;
-	cout << "m*omegaB: " << this->mass*pow(sqrt(4*this->Ub/(this->mass*pow((this->xb-this->xc),2.0))),2.0) << endl;
+// 	cout << "omegaB: " << sqrt(4*this->Ub/(this->mass*pow((this->xb-this->xc),2.0))) << endl;
+// 	cout << "m*omegaB: " << this->mass*pow(sqrt(4*this->Ub/(this->mass*pow((this->xb-this->xc),2.0))),2.0) << endl;
 	
 	//this->D = 2*this->k_b*this->temperature*this->mass*sqrt(4*this->Ub/(this->mass*pow((this->xb-this->xc),2.0)));   //nur zum check des Skalierungsverhalten von Kramersrate, Wieder auskommentieren später
 	//cout << "D: " << 2*this->k_b*this->temperature*this->mass*sqrt(4*this->Ub/(this->mass*pow((this->xb-this->xc),2.0))) << endl;
@@ -182,7 +182,7 @@ void SimulationOptions::setInitValues(){
     // wähle Anfangsbedingungen für Vergleich mit paper oder beliebig
     if(this->paperBool==0)
     {
-      x0=1.0*this->xc;
+      x0=0.0;//1.0*this->xc;
       v0=0.0;
     }
     else{ //Berechnung der Anfangsgeschwindigkeit über die entsprechenden Eigenwerte 
@@ -292,8 +292,10 @@ cout << "dt " << dt << endl;
 this->gamma = this->D/(2.0*this->k_b*this->temperature);
 cout << "gamma/m: " << this->gamma/this->mass << endl;
 this->nSettling = pow(2,ceil(log2(this->tSettling/this->dt))); //must be at least as high as I(t) needs to be at approximately 0
+cout <<" nSettling " << this->nSettling << endl; 
 this->nFourier =this->nSettling*pow(2, 4); // must be larger than nSettling to avoid boundary
 					//  effects of the FFT and be a power of 2 for the FFT
+cout << "nFourier " << this->nFourier << endl;
 }
 
 

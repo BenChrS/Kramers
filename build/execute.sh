@@ -1,14 +1,14 @@
 #!/bin/bash
 
-tau=1
+tau=2
 a=3.1
 chi=6
 potw=1
   #  D=666.6667 #25.5692 #2    #35.77709
   # temperature=1.0
 B_eff=0
-npTen=0
-npTwo=0					
+npTen=1
+npTwo=3					
 avOpt=1
 avNum=1
 transition=0
