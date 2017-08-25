@@ -260,15 +260,15 @@ NoiseDiss::NoiseDiss(SimulationOptions& so){
 		break;
 	  }
 	  // ----prepare simulation functions and dependent variables----
-	  this->tFourierVec.resize(so.nFourier, 0.0);  // all times for nFourier steps
+	  this->tFourierVec.resize(so.nFourier, 0.0);  // all times for nFourier steps       
 
-	  this->corrFVec.resize(so.nFourier, 0.0); // I(t) for t=[0, nFourier*dt]
-	  this->dispKernel.resize(so.nSteps, 0.0); //Gamma(t) for t=[0, nSteps*dt]
+	  this->corrFVec.resize(so.nFourier, 0.0); // I(t) for t=[0, nFourier*dt]	//Correlation function
+	  this->dispKernel.resize(so.nSteps, 0.0); //Gamma(t) for t=[0, nSteps*dt]	//dissipationkernel
 	  this->noise.resize(so.nSteps, 0.0);
 	  this->allNoise.resize(so.np, vector<double>(so.nSteps, 0.0));
 	  linspace(0.0, so.dt, this->tFourierVec);
-	  this->corrFVec = this->corrFunc(0.0, so.dt, so.nFourier); // erstes Argument ist t0, zweites "nSteps"
-      this->dispKernel = generateDissipationKernel(so.nSteps, corrFVec, so.temperature, so.k_b, so.optimisationBool, so.dPrecision);
+	  this->corrFVec = this->corrFunc(0.0, so.dt, so.nFourier); // erstes Argument ist t0, zweites "nSteps"                        //erzeugt korrelationsfunktion
+      this->dispKernel = generateDissipationKernel(so.nSteps, corrFVec, so.temperature, so.k_b, so.optimisationBool, so.dPrecision);	//erzeugt Dissipationskernel
       //generateDissipationKernel(so.nSteps, corrFVec, so.temperature, so.k_b, so.optimisationBool, so.dPrecision);
 	  calcG(so.dt, corrFVec,so.corrFuncNr, so.optimisationBool, so.gPrecision, this->G);
 	  this->tGVec.resize(G.size(), 0.0);

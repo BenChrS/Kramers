@@ -42,3 +42,17 @@ sdeSolver
 2) eulerCromerColNoise
 3) adamsBColNoise (recommended)
 4) eulerWhiteNoise
+
+
+kinEnerAv:
+parameters 
+	Corr0:
+		temperature=1
+		mass=1
+		D=10
+		T=30
+		nSteps=30*2**7
+		np=8000
+		x0=0
+		v0=0
+		duration: 50 minutes

@@ -104,7 +104,7 @@ void SimulationOptions::setInitValues(){
         //this->npTen=4;
         //this->npTwo=0;
 	this->np = pow(10,npTen)*pow(2,this->npTwo); //number of averaged simulations (number of particles)
-	this->optimisationBool = true;
+	this->optimisationBool = false;  //must be set to false for third correlation function
 	this->gPrecisionTen = -3;
 	this->gPrecision = pow(10,this->gPrecisionTen); //if opitmisationBool is set to true gPrecision will be the smallest value in G(t)
 	this->dPrecisionTen = -3;
