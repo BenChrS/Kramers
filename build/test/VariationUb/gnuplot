@@ -1,5 +1,0 @@
-plot 'potential_0.33E.txt' using 1:2 title 'Eb=0.3' w l lw 6, 
-'potential_0.5E.txt' using 1:2 title 'Eb=0.5' w l lw 6, 
-'potential_E.txt' using 1:2 title 'Eb=1.0' w l lw 6, 
-'potential_2E.txt' using 1:2 title 'Eb=2.0' w l lw 6,
-'potential_2.5E.txt' using 1:2 title 'Eb=2.5' w l lw 6
