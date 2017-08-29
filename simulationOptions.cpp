@@ -86,7 +86,7 @@ void SimulationOptions::setInitValues(){
 	//physical settings
 	this->k_b = 1; // k_boltzmann constant
 	this->temperature = 1.0; //2.0
-	this->mass =1.0/8.0*this->temperature; //1.0; //mass of particle
+	this->mass =8.0*this->temperature; //1.0; //mass of particle
 	//this->D = 10; //note: shouldn't influence evolution related to correlation function 3
         //this->tau = 5; // see paper /only important for first correlation function
 	//this->a = 7.6; // only important for second correlation function

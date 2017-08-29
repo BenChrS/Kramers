@@ -533,7 +533,7 @@ void averageFluxLeftRight(vector<double>& vec, double& averageRate)
  int k=0; 
  averageRate = 0.0;
  
- for(int i=200; i < vec.size(); i++) // bei t=25 hat der Fluss seine Grenzwert erreicht (nSteps=1000)
+ for(int i=500; i < vec.size(); i++) // bei t=25 hat der Fluss seine Grenzwert erreicht (nSteps=1000)
  {
   averageRate += vec.at(i); 
   k += 1;
