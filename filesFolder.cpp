@@ -332,6 +332,7 @@ Filenames::Filenames(){
 	this->fluxTotal = "fluxTotal";
 	this->fluxPositiveTotal = "fluxPositiveTotal";
 	this->fluxNegativeTotal = "fluxNegativeTotal";
+	this->fluxPaperTotal = "fluxPaperTotal";
 	this->test = "test";
 	this->test1 = " test1";
 	this->test2 = " test2";

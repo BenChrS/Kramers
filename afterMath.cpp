@@ -533,7 +533,7 @@ void averageFluxLeftRight(vector<double>& vec, double& averageRate)
  int k=0; 
  averageRate = 0.0;
  
- for(int i=350; i < vec.size(); i++) // bei t=20 hat der Fluss seine Grenzwert erreicht
+ for(int i=200; i < vec.size(); i++) // bei t=25 hat der Fluss seine Grenzwert erreicht (nSteps=1000)
  {
   averageRate += vec.at(i); 
   k += 1;
@@ -545,21 +545,21 @@ void averageFluxLeftRight(vector<double>& vec, double& averageRate)
 //KramersRate wie in Paper berechnet, backscattering von jenseits der Border noch nicht berücksichtigt
 void KramersFluxPaper(vector<double>& rate, const vector < vector<double> >& allX, const double& dt, const int& np, const double& border)
 {
+  
+  fstream Paper1,Paper2;
+  Paper1.open("ParticlesPaper.dat",ios::out);
+  Paper2.open("fluxPaper.dat",ios::out);
+  
   int i;  //Zeiten
   int j;	//Teilchen
   int absParticles=0;  				//Zahl absorbierter Teilchen pro Zeitschritt
-  int absParticlesTotal=0; 		//Gesamtzahl absorbierter Teilchen
+  int absParticlesTotal=0; 			//Gesamtzahl absorbierter Teilchen
   int nSteps=0;
   
-  for(i=0;i<allX.at(0).size();i++)
-  {
-    nSteps++;
-  }
-  cout << "nSteps " << nSteps << endl;
-  
-  vector<int> abs(allX.at(0).size(), 0);		//Zahl absorbierter Teilchen für jedes Zeitinkrement
+  vector<int> abs(allX.at(0).size(), 0);			//Zahl absorbierter Teilchen für jedes Zeitinkrement
   vector<int> absTotal(allX.at(0).size(), 0);
-//   vector<int> abs(nSteps, 0);		//Zahl absorbierter Teilchen für jedes Zeitinkrement
+  vector<int> alrAbs(allX.size(), 0);				//Teilchen schon absorbiert? 0: nein; 1: ja
+//   vector<int> abs(nSteps, 0);				//Zahl absorbierter Teilchen für jedes Zeitinkrement
 //   vector<int> absTotal(nSteps, 0);
 //   abs.resize(allX.at(0).size(), 0);				//Zahl absorbierter Teilchen für jedes Zeitinkrement
 //   absTotal.resize(allX.at(0).size(), 0);
@@ -569,22 +569,24 @@ void KramersFluxPaper(vector<double>& rate, const vector < vector<double> >& all
   {
     for(j=0;j<allX.size();j++)
     {
-      if(allX.at(j).at(i)>=border)
+      if(allX.at(j).at(i)>=border && alrAbs.at(j)==0)
       {
 	absParticles++;
 	absParticlesTotal++;
-	cout << "absPraticles " << absParticles << " absParticlesTotal " << absParticlesTotal << endl;
+	alrAbs.at(j)=1;		//Teilchen, die schon absorbiert wurden, werden nicht nochmal gezählt
+	
       }
-      abs.at(i)=absParticles;
-      absTotal.at(i)=absParticlesTotal;
-      absParticles=0;
     }
+    Paper1 << "absPraticles " << absParticles << " absParticlesTotal " << absParticlesTotal << endl;
+    abs.at(i)=absParticles;
+    absTotal.at(i)=absParticlesTotal;
+    absParticles=0;
   }
 
   for(i=0; i<rate.size(); i++)
   {
     rate.at(i)=1.0/(np-absTotal.at(i))*abs.at(i)/dt;
-    cout << "rate.at(i) " << rate.at(i) << endl; 
+    Paper2 << "rate.at(i) " << rate.at(i) << endl; 
   }
 
 }
@@ -1033,10 +1035,10 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 	      fluxPositiveTotal.at(a)=0;}
 	    }  
 	    
-	    if(j==so.avNum-1)
-	    {
-	    averageFluxLeftRight(fluxPositiveTotal, averageKramers); //berechnet den Mittelwert des Flusses (beachte, dass der Zeitpunkt, ab dem gemittelt wird, gegebenenfalls angepasst werden muss!!)
-	    }
+// 	    if(j==so.avNum-1)
+// 	    {
+// 	    averageFluxLeftRight(fluxPositiveTotal, averageKramers); //berechnet den Mittelwert des Flusses (beachte, dass der Zeitpunkt, ab dem gemittelt wird, gegebenenfalls angepasst werden muss!!)
+// 	    }
 	    
 	    writeToFile(results.tVec,fluxPositiveTotal,filenames.fluxPositiveTotal,headerString,foldernames.main);
 	    buildAverage(fluxNegativeTotal,ksim.fluxNegativeAvVec);
@@ -1053,6 +1055,7 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 	      if(fluxPaperTotal.at(a)<0){
 	      fluxPaperTotal.at(a)=0;}
 	    } 
+	    averageFluxLeftRight(fluxPaperTotal, averageKramers);
 	    writeToFile(results.tVec,fluxPaperTotal,filenames.fluxPaperTotal,headerString,foldernames.main);
 	}
 	//writeToFile(results.tVec,flux,filenames.flux,headerString,foldernames.main);
