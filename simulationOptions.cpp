@@ -95,12 +95,12 @@ void SimulationOptions::setInitValues(){
 
 	//statistical/program settings
  	this->t0 = 0.0; //time interval [t0, t1]
-        this->t1 = 30.0;     //1.0: für kb*T=0.5 Limes
+        this->t1 = 100.0;     //1.0: für kb*T=0.5 Limes
 	this->tSettling = 100.0; // time needed for I(t) to be approximately 0
 	this->timeSettled = (this->t1-this->t0)/3.0; //approximate time particles need to be in equilibrium - only important for kinetic Energy Average - not yet in external call
         this->nStepsFactor = 30;//round(this->t1-this->t0);
         this->nStepsTwo = 7;   //15: für kb*T=0.5 Limes
-	this->nSteps = nStepsFactor*pow(2, this->nStepsTwo); // number of final datapos (stored), must be devidable by 2
+	this->nSteps = 1000;//nStepsFactor*pow(2, this->nStepsTwo); // number of final datapos (stored), must be devidable by 2
         //this->npTen=4;
         //this->npTwo=0;
 	this->np = pow(10,npTen)*pow(2,this->npTwo); //number of averaged simulations (number of particles)
@@ -182,7 +182,7 @@ void SimulationOptions::setInitValues(){
     // wähle Anfangsbedingungen für Vergleich mit paper oder beliebig
     if(this->paperBool==0)
     {
-      x0=0.0;//1.0*this->xc;
+      x0=1.0*this->xc;
       v0=0.0;
     }
     else{ //Berechnung der Anfangsgeschwindigkeit über die entsprechenden Eigenwerte 
