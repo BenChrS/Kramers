@@ -4,3 +4,4 @@ build/execute.sh
 build/input.txt
 build_readme.txt
 infoFile.txt
+*.kdev4
