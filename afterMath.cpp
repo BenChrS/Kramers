@@ -542,6 +542,55 @@ void averageFluxLeftRight(vector<double>& vec, double& averageRate)
   averageRate = averageRate/k; // Mittelung über alle verbleibenden 800 Zeitschritte
 }
 
+//KramersRate wie in Paper berechnet, backscattering von jenseits der Border noch nicht berücksichtigt
+void KramersFluxPaper(vector<double>& rate, const vector < vector<double> >& allX, const double& dt, const int& np, const double& border)
+{
+  int i;  //Zeiten
+  int j;	//Teilchen
+  int absParticles=0;  				//Zahl absorbierter Teilchen pro Zeitschritt
+  int absParticlesTotal=0; 		//Gesamtzahl absorbierter Teilchen
+  int nSteps=0;
+  
+  for(i=0;i<allX.at(0).size();i++)
+  {
+    nSteps++;
+  }
+  cout << "nSteps " << nSteps << endl;
+  
+  vector<int> abs(allX.at(0).size(), 0);		//Zahl absorbierter Teilchen für jedes Zeitinkrement
+  vector<int> absTotal(allX.at(0).size(), 0);
+//   vector<int> abs(nSteps, 0);		//Zahl absorbierter Teilchen für jedes Zeitinkrement
+//   vector<int> absTotal(nSteps, 0);
+//   abs.resize(allX.at(0).size(), 0);				//Zahl absorbierter Teilchen für jedes Zeitinkrement
+//   absTotal.resize(allX.at(0).size(), 0);
+  rate.resize(allX.at(0).size(), 0.0);
+
+  for(i=0;i<allX.at(0).size();i++)
+  {
+    for(j=0;j<allX.size();j++)
+    {
+      if(allX.at(j).at(i)>=border)
+      {
+	absParticles++;
+	absParticlesTotal++;
+	cout << "absPraticles " << absParticles << " absParticlesTotal " << absParticlesTotal << endl;
+      }
+      abs.at(i)=absParticles;
+      absTotal.at(i)=absParticlesTotal;
+      absParticles=0;
+    }
+  }
+
+  for(i=0; i<rate.size(); i++)
+  {
+    rate.at(i)=1.0/(np-absTotal.at(i))*abs.at(i)/dt;
+    cout << "rate.at(i) " << rate.at(i) << endl; 
+  }
+
+}
+
+
+
 // returns the averaged potential energy over all times
 void calcPotEnergyAv(vector<double>& vec, const vector< vector<double> >& allX, const vector<double>& tVec, function<double(double, double)> potentialFunc)
 {
@@ -938,9 +987,11 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 	vector<double> flux(so.nSteps,0.0);
 	vector<double> fluxPositive(so.nSteps,0.0);
 	vector<double> fluxNegative(so.nSteps,0.0);
+	vector<double> fluxPaper(so.nSteps,0.0);
 	vector<double> fluxTotal(so.nSteps,0.0);
  	vector<double> fluxPositiveTotal(so.nSteps,0.0);
  	vector<double> fluxNegativeTotal(so.nSteps,0.0);
+	vector<double> fluxPaperTotal(so.nSteps,0.0);
 	double averageKramers=0.0;
 // 	fstream E;
 //          E.open("fluxtotvorher.dat", ios::out | ios::app);
@@ -948,10 +999,11 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 //  	{E << fluxTotal.at(i) << endl;}
 	calcFlux(flux,rightDistKramers,rightDist,so.dt);
         fluxLeftRight(fluxPositive,fluxNegative,so.xb,results.allX,so.dt);
+	KramersFluxPaper(fluxPaper, results.allX, so.dt, so.np, so.rxborder);
 	ksim.fluxAvVec.at(j)=flux;
 	ksim.fluxPositiveAvVec.at(j)=fluxPositive;
 	ksim.fluxNegativeAvVec.at(j)=fluxNegative;
-	
+	ksim.fluxPaperAvVec.at(j)=fluxPaper;
 // 	if(j==0){
 // 	fstream A;
 //         A.open("eins.dat", ios::out | ios::app);
@@ -972,28 +1024,36 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 	
 	if(j==so.avNum-1)
 	{
-	buildAverage(fluxTotal,ksim.fluxAvVec);
-	writeToFile(results.tVec,fluxTotal,filenames.fluxTotal,headerString,foldernames.main);
-	buildAverage(fluxPositiveTotal,ksim.fluxPositiveAvVec); // wird richtig gemittelt, wenn für jeden Fluss eigener Vektor definiert wird
-	for(int a=0;a<fluxPositiveTotal.size();a++)
-	{
-	  if(fluxPositiveTotal.at(a)<0){
-	  fluxPositiveTotal.at(a)=0;}
-	}  
-	
-	if(j==so.avNum-1)
-	{
-	averageFluxLeftRight(fluxPositiveTotal, averageKramers); //berechnet den Mittelwert des Flusses (beachte, dass der Zeitpunkt, ab dem gemittelt wird, gegebenenfalls angepasst werden muss!!)
-	}
-	
-	writeToFile(results.tVec,fluxPositiveTotal,filenames.fluxPositiveTotal,headerString,foldernames.main);
-	buildAverage(fluxNegativeTotal,ksim.fluxNegativeAvVec);
-	for(int a=0;a<fluxNegativeTotal.size();a++)
-	{
-	  if(fluxNegativeTotal.at(a)<0){
-	  fluxNegativeTotal.at(a)=0;}
-	}  
-	writeToFile(results.tVec,fluxNegativeTotal,filenames.fluxNegativeTotal,headerString,foldernames.main);
+	    buildAverage(fluxTotal,ksim.fluxAvVec);
+	    writeToFile(results.tVec,fluxTotal,filenames.fluxTotal,headerString,foldernames.main);
+	    buildAverage(fluxPositiveTotal,ksim.fluxPositiveAvVec); // wird richtig gemittelt, wenn für jeden Fluss eigener Vektor definiert wird
+	    for(int a=0;a<fluxPositiveTotal.size();a++)
+	    {
+	      if(fluxPositiveTotal.at(a)<0){
+	      fluxPositiveTotal.at(a)=0;}
+	    }  
+	    
+	    if(j==so.avNum-1)
+	    {
+	    averageFluxLeftRight(fluxPositiveTotal, averageKramers); //berechnet den Mittelwert des Flusses (beachte, dass der Zeitpunkt, ab dem gemittelt wird, gegebenenfalls angepasst werden muss!!)
+	    }
+	    
+	    writeToFile(results.tVec,fluxPositiveTotal,filenames.fluxPositiveTotal,headerString,foldernames.main);
+	    buildAverage(fluxNegativeTotal,ksim.fluxNegativeAvVec);
+	    for(int a=0;a<fluxNegativeTotal.size();a++)
+	    {
+	      if(fluxNegativeTotal.at(a)<0){
+	      fluxNegativeTotal.at(a)=0;}
+	    }  
+	    writeToFile(results.tVec,fluxNegativeTotal,filenames.fluxNegativeTotal,headerString,foldernames.main);
+	    
+	    buildAverage(fluxPaperTotal,ksim.fluxPaperAvVec);
+	    for(int a=0;a<fluxPaperTotal.size();a++)
+	    {
+	      if(fluxPaperTotal.at(a)<0){
+	      fluxPaperTotal.at(a)=0;}
+	    } 
+	    writeToFile(results.tVec,fluxPaperTotal,filenames.fluxPaperTotal,headerString,foldernames.main);
 	}
 	//writeToFile(results.tVec,flux,filenames.flux,headerString,foldernames.main);
 	//writeToFile(results.tVec,fluxPositive,filenames.fluxPositive,headerString,foldernames.main);

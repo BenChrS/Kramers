@@ -82,6 +82,7 @@ public:
 	string fluxTotal;
 	string fluxPositiveTotal;
 	string fluxNegativeTotal;
+	string fluxPaperTotal;
 	string test;
 	string test1;
 	string test2;

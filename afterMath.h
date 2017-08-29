@@ -88,6 +88,9 @@ void fluxLeftRight(vector <double>& vec,vector <double>& vec1,const double borde
 //average of kramersrate
 void averageFluxLeftRight(vector<double>& vec, double& averageRate);
 
+//KramersRate wie in Paper berechnet, backscattering von jenseits der Border noch nicht berücksichtigt
+void KramersFluxPaper(vector<double>& rate, const vector < vector<double> >& allX, const double& dt, const int& np, const double& border);
+
 // returns the averaged potential energy over all times
 void calcPotEnergyAv(vector<double>& vec, const vector< vector<double> >& allX, const vector<double>& tVec, function<double(double, double)> potentialFunc);
 
