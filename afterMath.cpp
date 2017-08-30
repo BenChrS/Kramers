@@ -528,18 +528,27 @@ void fluxLeftRight(vector <double>& vec,vector <double>& vec1,const double borde
  f << n << " " << vec.at(n) << " " << vec1.at(n) << endl;}*/
 }
 
-void averageFluxLeftRight(vector<double>& vec, double& averageRate)
+//statistic of FluxPaper
+void averageFluxLeftRight(vector<double>& vec, double& averageRate,double& variance)
 {
- int k=0; 
- averageRate = 0.0;
- 
- for(int i=500; i < vec.size(); i++) // bei t=25 hat der Fluss seine Grenzwert erreicht (nSteps=1000)
- {
-  averageRate += vec.at(i); 
-  k += 1;
- }
+  int i;
+  int k=0; 
+  averageRate = 0.0;
+  variance=0.0;
+  
+  for(i=800; i < vec.size(); i++) // bei t=25 hat der Fluss seine Grenzwert erreicht (nSteps=1000)
+  {
+    averageRate += vec.at(i); 
+    k += 1;
+  }
   cout << k << endl;
   averageRate = averageRate/k; // Mittelung über alle verbleibenden 800 Zeitschritte
+  
+  for(i=800; i < vec.size();i++)
+  {
+    variance +=  pow(vec.at(i)-averageRate,2.0);
+  }
+  variance=1.0/(averageRate*sqrt(k))*sqrt(1.0/(k-1)*variance);
 }
 
 //KramersRate wie in Paper berechnet, backscattering von jenseits der Border noch nicht berücksichtigt
@@ -995,6 +1004,7 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
  	vector<double> fluxNegativeTotal(so.nSteps,0.0);
 	vector<double> fluxPaperTotal(so.nSteps,0.0);
 	double averageKramers=0.0;
+	double variance=0.0;
 // 	fstream E;
 //          E.open("fluxtotvorher.dat", ios::out | ios::app);
 //  	for(int i=0; i < fluxTotal.size(); i++)
@@ -1055,7 +1065,7 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 	      if(fluxPaperTotal.at(a)<0){
 	      fluxPaperTotal.at(a)=0;}
 	    } 
-	    averageFluxLeftRight(fluxPaperTotal, averageKramers);
+	    averageFluxLeftRight(fluxPaperTotal, averageKramers,variance);
 	    writeToFile(results.tVec,fluxPaperTotal,filenames.fluxPaperTotal,headerString,foldernames.main);
 	}
 	//writeToFile(results.tVec,flux,filenames.flux,headerString,foldernames.main);
@@ -1095,7 +1105,7 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 	kramersTheo = (sqrt(pow(gammaFre,2.0)/4.0+pow(omegaB,2.0))-gammaFre/2.0)/omegaB*omegaC/(2.0*M_PI)*exp(-so.Ub/(so.k_b*so.temperature));
 	kramersTheo1 = a*exp(-so.Ub/(so.k_b*so.temperature))*sqrt(so.Ub/so.mass)*1/so.xc;
 	cout << "kramersTheo " << kramersTheo << " " << "kramersTheo1 " << kramersTheo1 << endl;
-	cout << "kramersNumAv " << averageKramers << endl;
+	cout << "kramersNumAv " << averageKramers << " Varianz " << variance <<  endl;
 	}
 	
 	//------------------------------------------------------

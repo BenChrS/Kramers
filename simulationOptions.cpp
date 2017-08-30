@@ -86,7 +86,7 @@ void SimulationOptions::setInitValues(){
 	//physical settings
 	this->k_b = 1; // k_boltzmann constant
 	this->temperature = 1.0; //2.0
-	this->mass =8.0*this->temperature; //1.0; //mass of particle
+	this->mass =1.0*this->temperature; //1.0; //mass of particle
 	//this->D = 10; //note: shouldn't influence evolution related to correlation function 3
         //this->tau = 5; // see paper /only important for first correlation function
 	//this->a = 7.6; // only important for second correlation function
@@ -95,12 +95,12 @@ void SimulationOptions::setInitValues(){
 
 	//statistical/program settings
  	this->t0 = 0.0; //time interval [t0, t1]
-        this->t1 = 100.0;     //1.0: für kb*T=0.5 Limes
+        this->t1 = 375;     //1.0: für kb*T=0.5 Limes
 	this->tSettling = 100.0; // time needed for I(t) to be approximately 0
 	this->timeSettled = (this->t1-this->t0)/3.0; //approximate time particles need to be in equilibrium - only important for kinetic Energy Average - not yet in external call
         this->nStepsFactor = 30;//round(this->t1-this->t0);
         this->nStepsTwo = 7;   //15: für kb*T=0.5 Limes
-	this->nSteps = 1000;//nStepsFactor*pow(2, this->nStepsTwo); // number of final datapos (stored), must be devidable by 2
+	this->nSteps = 2000;//nStepsFactor*pow(2, this->nStepsTwo); // number of final datapos (stored), must be devidable by 2
         //this->npTen=4;
         //this->npTwo=0;
 	this->np = pow(10,npTen)*pow(2,this->npTwo); //number of averaged simulations (number of particles)
@@ -150,7 +150,7 @@ void SimulationOptions::setInitValues(){
 	this->potStartTime = 1.0; //for potential 5
 	this->potEndTime = 5.0; //for potential 5
 	
-	this->xc=10.0;
+	this->xc=75;
 	this->xb=1.6*this->xc;
 	this->Ub=2*this->k_b*this->temperature;
 	
@@ -285,7 +285,8 @@ void SimulationOptions::setInitValues(){
 
 
 void SimulationOptions::setDependentVariables(){
-this->dt = (t1-t0)/((double)nSteps) ;///(xc)/((double)nSteps);
+// this->dt = (t1-t0)/((double)nSteps);
+this->dt = (5*xc)/((double)nSteps); //mit passendem Skalierungsverhalten für Pot 7
 cout << "dt " << dt << endl;
 
   //----prepare simulations----

@@ -86,7 +86,7 @@ void calcFlux(vector<double>& vec,const vector<double>& vec1,const vector<double
 void fluxLeftRight(vector <double>& vec,vector <double>& vec1,const double border,const vector< vector<double> >& data,const double& dt);
 
 //average of kramersrate
-void averageFluxLeftRight(vector<double>& vec, double& averageRate);
+void averageFluxLeftRight(vector<double>& vec, double& averageRate,double& variance);
 
 //KramersRate wie in Paper berechnet, backscattering von jenseits der Border noch nicht berücksichtigt
 void KramersFluxPaper(vector<double>& rate, const vector < vector<double> >& allX, const double& dt, const int& np, const double& border);
