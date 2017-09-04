@@ -528,7 +528,7 @@ void fluxLeftRight(vector <double>& vec,vector <double>& vec1,const double borde
  f << n << " " << vec.at(n) << " " << vec1.at(n) << endl;}*/
 }
 
-//statistic of FluxPaper
+//statistic of FluxPaper oder eigene Methode 
 void averageFluxLeftRight(vector<double>& vec, double& averageRate,double& variance)
 {
   int i;
@@ -536,7 +536,7 @@ void averageFluxLeftRight(vector<double>& vec, double& averageRate,double& varia
   averageRate = 0.0;
   variance=0.0;
   
-  for(i=6000; i < vec.size(); i++) // bei t=25 hat der Fluss seine Grenzwert erreicht (nSteps=1000)
+  for(i=280; i < vec.size(); i++) // bei t=25 hat der Fluss seine Grenzwert erreicht (nSteps=1000)
   {
     averageRate += vec.at(i); 
     k += 1;
@@ -544,7 +544,7 @@ void averageFluxLeftRight(vector<double>& vec, double& averageRate,double& varia
   cout << k << endl;
   averageRate = averageRate/k; // Mittelung über alle verbleibenden 800 Zeitschritte
   
-  for(i=6000; i < vec.size();i++)
+  for(i=280; i < vec.size();i++)
   {
     variance +=  pow(vec.at(i)-averageRate,2.0);
   }
@@ -1065,7 +1065,16 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 	      if(fluxPaperTotal.at(a)<0){
 	      fluxPaperTotal.at(a)=0;}
 	    } 
-	    averageFluxLeftRight(fluxPaperTotal, averageKramers,variance);
+	    
+	    if(so.Kramers==0)
+	    {
+	      averageFluxLeftRight(fluxPaperTotal, averageKramers,variance);  
+	    }
+	    else
+	    {
+	      averageFluxLeftRight(fluxPositiveTotal, averageKramers,variance); 
+	    }
+	    
 	    writeToFile(results.tVec,fluxPaperTotal,filenames.fluxPaperTotal,headerString,foldernames.main);
 	}
 	//writeToFile(results.tVec,flux,filenames.flux,headerString,foldernames.main);
