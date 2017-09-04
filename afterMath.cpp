@@ -497,20 +497,20 @@ void fluxLeftRight(vector <double>& vec,vector <double>& vec1,const double borde
    l=0;
  }
 
-//   for(int i=0; i<vec.size(); i++)  // Normierung der Flüsse zum Zeitpunkt i auf Teilchenzahl der linken Seite vorhergehenden Zeitpunkt i-1
-//   {
-//    if(i==0)
-//    {
-//     vec.at(i)=vec.at(i);
-//    }
-//    else 
-//    {
-//     vec.at(i)=vec.at(i)/vecleft.at(i-1); 
-//    }
-//   }
+  for(int i=0; i<vec.size(); i++)  // Normierung der Flüsse zum Zeitpunkt i auf Teilchenzahl der linken Seite zum vorhergehenden Zeitpunkt i-1
+  {
+   if(i==0)
+   {
+    vec.at(i)=vec.at(i);
+   }
+   else 
+   {
+    vec.at(i)=vec.at(i)/vecleft.at(i-1); 
+   }
+  }
   
-  
- transform(vec.begin(), vec.end(), vec.begin(), bind1st(multiplies<double>(), 1.0/(data.size()*dt)));
+ transform(vec.begin(), vec.end(), vec.begin(), bind1st(multiplies<double>(), 1.0/dt)); 
+//  transform(vec.begin(), vec.end(), vec.begin(), bind1st(multiplies<double>(), 1.0/(data.size()*dt)));
  for(int a=0;a<vec.size();a++) // negative rechtsseitige Flüsse müssen vermieden werden, da diese lediglich numerischen Ursprungs sind!
 	{
 	  if(vec.at(a)<0){
