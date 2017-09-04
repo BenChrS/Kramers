@@ -281,7 +281,7 @@ void countRight(vector<double>& vec,vector<double>& vec1, vector<double>& transp
     fstream countRight,kramersClean;
     countRight.open("kramersFlux.dat",ios::out);
     kramersClean.open("clean.dat",ios::out);
-      for (int i = 0; i < data.at(0).size(); i++)
+    for (int i = 0; i < data.at(0).size(); i++)
       {
         for (int j = 0; j < data.size(); j ++)
         {
@@ -294,17 +294,18 @@ void countRight(vector<double>& vec,vector<double>& vec1, vector<double>& transp
                 }
           }
         }
-        /*if(i>0)
-            {
-             vec1.at(i) += vec1.at(i-1);
-            }*/
+//         if(i>0)
+//             {
+//              vec1.at(i) += vec1.at(i-1);
+//             }
+								      //akkumuliere Neu-Initialiserungen!!
       }
-      for(int n=0;n<vec.size();n++){
-     
-     countRight << t << " " <<   vec.at(n) << " " << fluxLeft.at(n) << endl;
-	t += 0.1;
-      }
-     t=0.0;
+//       for(int n=0;n<vec.size();n++){
+//      
+//      countRight << t << " " <<   vec.at(n) << " " << fluxLeft.at(n) << endl;
+// 	t += 0.1;
+//       }
+//      t=0.0;
 //       for(int i = 1; i < data.at(0).size(); i++)
 //       {
 //         if(i==0)
@@ -317,16 +318,16 @@ void countRight(vector<double>& vec,vector<double>& vec1, vector<double>& transp
 //         }
 //       }
 
-for(int i=0;i<vec.size();i++)
-{
- for(int j=0;j<i+1;j++)
- {
-   vec.at(i) += fluxLeft.at(j);    //Neu-Initialisierung und backscattering werden für jeden Zeitschritt akkumuliert
- }
-  kramersClean << t << " " << vec.at(i) << endl;
-  t += 0.1;
-  
-}
+    for(int i=0;i<vec.size();i++)
+      {
+	for(int j=0;j<i+1;j++)
+	  {
+	  vec.at(i) += vec1.at(j);		//Neu-Initialisierung werden für jeden Zeitschritt akkumuliert
+// 	  vec.at(i) += fluxLeft.at(j);    	//Neu-Initialisierung und backscattering werden für jeden Zeitschritt akkumuliert
+	  }
+// 	kramersClean << t << " " << vec.at(i) << endl;
+// 	t += 0.1;
+      }
   }
   else
   {
@@ -344,9 +345,16 @@ for(int i=0;i<vec.size();i++)
   transform(vec1.begin(), vec1.end(), vec1.begin(), bind1st(multiplies<double>(), 1.0/data.size()));
   transform(vec3.begin(), vec3.end(), vec3.begin(), bind1st(multiplies<double>(), 1.0/data.size()));
   }
-  transform(vec.begin(), vec.end(), vec.begin(), bind1st(multiplies<double>(), 1.0/data.size()));
+  
+  
+  for(int i=0; i<vec.size() ; i++)
+  {
+      vec.at(i) = vec.at(i)/leftParticles.at(i);
+    
+  }
+  /*transform(vec.begin(), vec.end(), vec.begin(), bind1st(multiplies<double>(), 1.0/data.size()));
   transform(vec1.begin(), vec1.end(), vec1.begin(), bind1st(multiplies<double>(), 1.0/data.size()));
-  transform(vec3.begin(), vec3.end(), vec3.begin(), bind1st(multiplies<double>(), 1.0/data.size())); //möglicherweise durch leftParticles.at(i) teilen!
+  transform(vec3.begin(), vec3.end(), vec3.begin(), bind1st(multiplies<double>(), 1.0/data.size()));*/ //möglicherweise durch leftParticles.at(i) teilen!
 
 //transition value for the kth iteration
 int n = vec.size()-1;
@@ -497,20 +505,20 @@ void fluxLeftRight(vector <double>& vec,vector <double>& vec1,const double borde
    l=0;
  }
 
-//   for(int i=0; i<vec.size(); i++)  // Normierung der Flüsse zum Zeitpunkt i auf Teilchenzahl der linken Seite vorhergehenden Zeitpunkt i-1
-//   {
-//    if(i==0)
-//    {
-//     vec.at(i)=vec.at(i);
-//    }
-//    else 
-//    {
-//     vec.at(i)=vec.at(i)/vecleft.at(i-1); 
-//    }
-//   }
+  for(int i=0; i<vec.size(); i++)  // Normierung der Flüsse zum Zeitpunkt i auf Teilchenzahl der linken Seite zum vorhergehenden Zeitpunkt i-1
+  {
+   if(i==0)
+   {
+    vec.at(i)=vec.at(i);
+   }
+   else 
+   {
+    vec.at(i)=vec.at(i)/vecleft.at(i-1); 
+   }
+  }
   
-  
- transform(vec.begin(), vec.end(), vec.begin(), bind1st(multiplies<double>(), 1.0/(data.size()*dt)));
+ transform(vec.begin(), vec.end(), vec.begin(), bind1st(multiplies<double>(), 1.0/dt)); 
+//  transform(vec.begin(), vec.end(), vec.begin(), bind1st(multiplies<double>(), 1.0/(data.size()*dt)));
  for(int a=0;a<vec.size();a++) // negative rechtsseitige Flüsse müssen vermieden werden, da diese lediglich numerischen Ursprungs sind!
 	{
 	  if(vec.at(a)<0){
@@ -528,7 +536,7 @@ void fluxLeftRight(vector <double>& vec,vector <double>& vec1,const double borde
  f << n << " " << vec.at(n) << " " << vec1.at(n) << endl;}*/
 }
 
-//statistic of FluxPaper
+//statistic of FluxPaper oder eigene Methode 
 void averageFluxLeftRight(vector<double>& vec, double& averageRate,double& variance)
 {
   int i;
@@ -536,7 +544,7 @@ void averageFluxLeftRight(vector<double>& vec, double& averageRate,double& varia
   averageRate = 0.0;
   variance=0.0;
   
-  for(i=240; i < vec.size(); i++) // bei t=25 hat der Fluss seine Grenzwert erreicht (nSteps=1000)
+  for(i=280; i < vec.size(); i++) // bei t=25 hat der Fluss seine Grenzwert erreicht (nSteps=1000)
   {
     averageRate += vec.at(i); 
     k += 1;
@@ -544,7 +552,7 @@ void averageFluxLeftRight(vector<double>& vec, double& averageRate,double& varia
   cout << k << endl;
   averageRate = averageRate/k; // Mittelung über alle verbleibenden 800 Zeitschritte
   
-  for(i=240; i < vec.size();i++)
+  for(i=280; i < vec.size();i++)
   {
     variance +=  pow(vec.at(i)-averageRate,2.0);
   }
@@ -1065,7 +1073,16 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 	      if(fluxPaperTotal.at(a)<0){
 	      fluxPaperTotal.at(a)=0;}
 	    } 
-	    averageFluxLeftRight(fluxPaperTotal, averageKramers,variance);
+	    
+	    if(so.Kramers==0)
+	    {
+	      averageFluxLeftRight(fluxPaperTotal, averageKramers,variance);  
+	    }
+	    else
+	    {
+	      averageFluxLeftRight(fluxTotal, averageKramers,variance); 
+	    }
+	    
 	    writeToFile(results.tVec,fluxPaperTotal,filenames.fluxPaperTotal,headerString,foldernames.main);
 	}
 	//writeToFile(results.tVec,flux,filenames.flux,headerString,foldernames.main);

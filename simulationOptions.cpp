@@ -152,7 +152,7 @@ void SimulationOptions::setInitValues(){
 	
 	this->xc=10;
 	this->xb=1.6*this->xc;
-	this->Ub=4.0*this->k_b*this->temperature;
+	this->Ub=2.0*this->k_b*this->temperature;
 	
 // 	this->mass = this->Ub/2.0; // Test für Skalierungsverhalten Ub/m=2
 	
