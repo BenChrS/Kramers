@@ -108,7 +108,7 @@ vector<double> generateCorrFunc3(const double& t0, const double& dt, const int& 
   double t = t0;
   for (int i = 0; i < nSteps; i++)
   {
-    output.at(i) = 1.0/4.0*pow(alpha,2.0)*(1-alpha*t)*exp(-alpha*t);
+    output.at(i) = D/4.0*pow(alpha,2.0)*(1-alpha*t)*exp(-alpha*t);
     t += dt;
   }
   return output;
