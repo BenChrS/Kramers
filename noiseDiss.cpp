@@ -102,13 +102,13 @@ vector<double> generateCorrFunc2(const double& t0, const double& dt, const int& 
 }
 
 // generate correlation function for massless theory
-vector<double> generateCorrFunc3(const double& t0, const double& dt, const int& nSteps, const double& D, const double& alpha)
+vector<double> generateCorrFunc3(const double& t0, const double& dt, const int& nSteps, const double& D, const double& alpha,const double& temperature, const double& k)
 {
   vector<double> output(nSteps, 0.0);
   double t = t0;
   for (int i = 0; i < nSteps; i++)
   {
-    output.at(i) = 1.0/4.0*pow(alpha,2.0)*(1-alpha*t)*exp(-alpha*t);
+    output.at(i) = 2.0*k*temperature/4.0*pow(alpha,2.0)*(1-alpha*t)*exp(-alpha*t);
     t += dt;
   }
   return output;
@@ -254,7 +254,7 @@ NoiseDiss::NoiseDiss(SimulationOptions& so){
 		case 0: this->corrFunc = bind(generateCorrFunc0, _1, _2, _3, so.D, so.tau); break;
 		case 1: this->corrFunc = bind(generateCorrFunc1, _1, _2, _3, so.D, so.a); break;
 		case 2: this->corrFunc = bind(generateCorrFunc2, _1, _2, _3, so.D, so.chi); break;
-		case 3: this->corrFunc = bind(generateCorrFunc3, _1, _2, _3, so.D, so.alpha); break;
+		case 3: this->corrFunc = bind(generateCorrFunc3, _1, _2, _3, so.D, so.alpha,so.temperature,so.k_b); break;
 		default: printf("corrFuncNr unknown\n");
 		//todo ErrorMessage
 		break;
