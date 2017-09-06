@@ -315,6 +315,7 @@ Filenames::Filenames(){
 	this->veloc = "veloc";
 	this->velocAv = "velocAv";
 	this->velocAvTotal = "velocAvTotal";
+	this->vSqrAvTotal = "vSqrAvTotal";
 	this->whiteNoise = "whitNoise";
 	this->pDist = "pDist";
 	this->pDist1 = "pDist1";

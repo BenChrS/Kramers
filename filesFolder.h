@@ -53,6 +53,7 @@ public:
 	string xAvTotal;
 	string velocAv;
 	string velocAvTotal;
+	string vSqrAvTotal;
 	string xSqrAv;
 	string xSqrAvTotal;
 	string xSqrAvTheo;

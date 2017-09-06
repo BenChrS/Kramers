@@ -86,7 +86,7 @@ void SimulationOptions::setInitValues(){
 	//physical settings
 	this->k_b = 1; // k_boltzmann constant
 	this->temperature = 1.0; //2.0
-	this->mass =1.0;//1.0/16.0*this->temperature; //1.0; //mass of particle
+	this->mass =4.0;//1.0/16.0*this->temperature; //1.0; //mass of particle
 	this->D = 4; //note: shouldn't influence evolution related to correlation function 3
         //this->tau = 5; // see paper /only important for first correlation function
 	//this->a = 7.6; // only important for second correlation function
@@ -96,7 +96,7 @@ void SimulationOptions::setInitValues(){
 	//statistical/program settings
  	this->t0 = 0.0; //time interval [t0, t1]
         this->t1 = 30;     //1.0: für kb*T=0.5 Limes
-	this->tSettling = 100.0; // time needed for I(t) to be approximately 0
+	this->tSettling = 10.0; // time needed for I(t) to be approximately 0
 	this->timeSettled = (this->t1-this->t0)/3.0; //approximate time particles need to be in equilibrium - only important for kinetic Energy Average - not yet in external call
         this->nStepsFactor = 30;//round(this->t1-this->t0);
         this->nStepsTwo = 7;   //15: für kb*T=0.5 Limes
@@ -297,7 +297,7 @@ this->gamma = this->D/(2.0*this->k_b*this->temperature);
 cout << "gamma/m: " << this->gamma/this->mass << endl;
 this->nSettling = pow(2,ceil(log2(this->tSettling/this->dt))); //must be at least as high as I(t) needs to be at approximately 0
 cout <<" nSettling " << this->nSettling << endl; 
-this->nFourier =this->nSettling*pow(2, 4); // must be larger than nSettling to avoid boundary
+this->nFourier =this->nSettling*pow(2, 1); // must be larger than nSettling to avoid boundary
 					//  effects of the FFT and be a power of 2 for the FFT
 cout << "nFourier " << this->nFourier << endl;
 }

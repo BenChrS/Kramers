@@ -39,6 +39,7 @@ public:
 	vector<vector<double> > xAvVec;
 	vector<vector<double> > xSquaredAvVec;
 	vector<vector<double> > vAvVec;
+	vector<vector<double> > vSquaredAvVec;
 	vector<vector<double> > transitionAvVec;
 	vector<vector<double> > fluxAvVec;
 	vector<vector<double> > fluxPositiveAvVec;

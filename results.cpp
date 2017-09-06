@@ -87,6 +87,7 @@ KappaSimulation::KappaSimulation(const SimulationOptions &so){
 	this->xAvVec.resize(so.avNum,vector<double>(so.nSteps, 0.0));
 	this->xSquaredAvVec.resize(so.avNum,vector<double>(so.nSteps, 0.0));
 	this->vAvVec.resize(so.avNum,vector<double>(so.nSteps, 0.0));
+	this->vSquaredAvVec.resize(so.avNum,vector<double>(so.nSteps, 0.0));
 	this->transitionAvVec.resize(so.avNum,vector<double>(so.nSteps, 0.0));
 	this->fluxAvVec.resize(so.avNum,vector<double>(so.nSteps, 0.0));
 	this->fluxPositiveAvVec.resize(so.avNum,vector<double>(so.nSteps, 0.0));

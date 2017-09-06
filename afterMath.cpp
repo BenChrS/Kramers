@@ -1236,13 +1236,19 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 
     //averaged velocity !! 
 	vector<double> velocAv(so.nSteps, 0.0);
+	vector<double> vSqrAv(so.nSteps, 0.0);
 	vector<double> velocAvTotal(so.nSteps,0.0);
+	vector<double> vSqrAvTotal(so.nSteps, 0.0);
 	buildAverage(velocAv, results.allV);
+	buildAverageSquared(vSqrAv, results.allV);
 	ksim.vAvVec.at(j)= velocAv;
+	ksim.vSquaredAvVec.at(j)=vSqrAv;
 	if(j==so.avNum-1)
 	{
 	buildAverage(velocAvTotal,ksim.vAvVec);
 	writeToFile(results.tVec,velocAvTotal,filenames.velocAvTotal,headerString,foldernames.main);
+	buildAverage(vSqrAvTotal,ksim.vSquaredAvVec);
+	writeToFile(results.tVec,vSqrAvTotal,filenames.vSqrAvTotal,headerString,foldernames.main);
 	}
 	
 	
