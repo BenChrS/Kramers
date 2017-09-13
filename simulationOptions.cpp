@@ -87,11 +87,12 @@ void SimulationOptions::setInitValues(){
 	this->k_b = 1; // k_boltzmann constant
 	this->temperature = 1.0; //2.0
 	this->mass =1.0;//1.0/16.0*this->temperature; //1.0; //mass of particle
-	this->D = 4; //note: shouldn't influence evolution related to correlation function 3
+	this->D = 10; //note: shouldn't influence evolution related to correlation function 3
         //this->tau = 5; // see paper /only important for first correlation function
 	//this->a = 7.6; // only important for second correlation function
 	//this->chi=3.5;//correlation time for third correlation function
- 	this->alpha=1; // correlation time for massless theory
+ 	this->alpha=sqrt(this->mass); // correlation time for massless theory // Einheit Masse/Zeit alpha=sqrt(mass)*alpha' 
+			//alpha=sqrt(mass) für alpha'=1 , alpha' ist inverse Korrelationszeit
 
 	//statistical/program settings
  	this->t0 = 0.0; //time interval [t0, t1]

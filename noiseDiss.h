@@ -40,7 +40,7 @@ vector<double> generateCorrFunc1(const double& t0, const double& dt, const int& 
 vector<double> generateCorrFunc2(const double& t0, const double& dt, const int& nSteps, const double& D, const double& chi);
 
 // generate correlation function for massless theory
-vector<double> generateCorrFunc3(const double& t0, const double& dt, const int& nSteps, const double& D, const double& alpha,const double& temperature, const double& k);
+vector<double> generateCorrFunc3(const double& t0, const double& dt, const int& nSteps, const double& D, const double& alpha,const double& temperature, const double& k, const double& mass);
 
 // generate dissipation kernel
 //Gamma(t)=0.5/(k*T)*I(t) -- dissipation-fluctuation theorem
