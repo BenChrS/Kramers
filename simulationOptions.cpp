@@ -86,26 +86,27 @@ void SimulationOptions::setInitValues(){
 	//physical settings
 	this->k_b = 1; // k_boltzmann constant
 	this->temperature = 1.0; //2.0
-	this->mass =1.0;//1.0/16.0*this->temperature; //1.0; //mass of particle
+	this->mass =2.0;//1.0/16.0*this->temperature; //1.0; //mass of particle
 	this->D = 10; //note: shouldn't influence evolution related to correlation function 3
         //this->tau = 5; // see paper /only important for first correlation function
 	//this->a = 7.6; // only important for second correlation function
 	//this->chi=3.5;//correlation time for third correlation function
  	this->alpha=sqrt(this->mass); // correlation time for massless theory // Einheit Masse/Zeit alpha=sqrt(mass)*alpha' 
 			//alpha=sqrt(mass) für alpha'=1 , alpha' ist inverse Korrelationszeit
+	this->minAlpha=-this->alpha*this->alpha/4.0*exp(-2.0);  //Minimum des Kernels
 
 	//statistical/program settings
  	this->t0 = 0.0; //time interval [t0, t1]
-        this->t1 = 30;     //1.0: für kb*T=0.5 Limes
+        this->t1 = 15;     //1.0: für kb*T=0.5 Limes
 	this->tSettling = 10.0; // time needed for I(t) to be approximately 0
 	this->timeSettled = (this->t1-this->t0)/3.0; //approximate time particles need to be in equilibrium - only important for kinetic Energy Average - not yet in external call
         this->nStepsFactor = 30;//round(this->t1-this->t0);
-        this->nStepsTwo = 7;   //15: für kb*T=0.5 Limes
-	this->nSteps = nStepsFactor*pow(2, this->nStepsTwo); ///2000; // number of final datapos (stored), must be devidable by 2
+        this->nStepsTwo = 14;   //15: für kb*T=0.5 Limes
+	this->nSteps =nStepsFactor*pow(2, this->nStepsTwo); ///2000; // number of final datapos (stored), must be devidable by 2
         //this->npTen=4;
         //this->npTwo=0;
 	this->np = pow(10,npTen)*pow(2,this->npTwo); //number of averaged simulations (number of particles)
-	this->optimisationBool = false;  //must be set to false for third correlation function
+	this->optimisationBool = true;  //must be set to false for third correlation function
 	this->gPrecisionTen = -3;
 	this->gPrecision = pow(10,this->gPrecisionTen); //if opitmisationBool is set to true gPrecision will be the smallest value in G(t)
 	this->dPrecisionTen = -3;

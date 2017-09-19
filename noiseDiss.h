@@ -44,7 +44,7 @@ vector<double> generateCorrFunc3(const double& t0, const double& dt, const int& 
 
 // generate dissipation kernel
 //Gamma(t)=0.5/(k*T)*I(t) -- dissipation-fluctuation theorem
-vector<double> generateDissipationKernel(const int& nMax, const vector<double>& corrFunction,
+vector<double> generateDissipationKernel(const int& nMax, const vector<double>& corrFunction,const int& corrFuncNr, const double& minAlpha,
 					 const double& temperature, const double& k, const bool& optimisationBool, const double& dPrecision);
 
 // calculate the function G(t)

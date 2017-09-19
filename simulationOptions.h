@@ -26,6 +26,7 @@ public:
 	double a; // only important for second correlation function
 	double chi; //correlation time for third correlation function
 	double alpha; // correlation time for the massless theory
+	double minAlpha; //Minimum des Kernels
 	double aWhite; // eigenvalue for white noise
 	double aColoured; // eigenvalue for coloured noise
         double bColoured;

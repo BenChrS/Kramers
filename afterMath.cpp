@@ -932,21 +932,47 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 	
     
     
+    //-----------------------------Corr3----------------------------------
+//     fstream Gam,GamOm;
+//     Gam.open("Gam.dat", ios::out);
+//     GamOm.open("GamOm.dat", ios::out);
+//     double dom;
+//     double om=0.0;
+//     double tkernel=0.0;
+//     dom = M_PI/so.dt/(2.0*so.nFourier/2+1);
+//     vector<double> specOm(2.0*so.nFourier/2+1);
+//     vector<double> kernel(so.nSteps);
+//     
+//     for(int i=0; i<kernel.size(); i++)  //Kernel
+//     {
+// 	
+//       kernel.at(i)=1.0/4.0*so.alpha*so.alpha*(1-so.alpha/sqrt(so.mass)*tkernel)*exp(-so.alpha/sqrt(so.mass)*tkernel);
+//       Gam << tkernel << " " << kernel.at(i) << endl ;
+//       tkernel += so.dt; 
+//       
+//     }
     
-    
+//     for(int i=0; i<specOm.size(); i++)  //FourierTrafo des Kernels
+//     {
+// 	
+//       specOm.at(i)=pow(so.alpha,3.0)*pow(om,2.0)/(sqrt(so.mass)*pow(pow(om,2.0)+pow(so.alpha,2.0)/so.mass,2.0));
+//       GamOm << om << " " << specOm.at(i) << endl ;
+//       om += dom; 
+//       
+//     }
 	//!!!!!!!!!!!1Grenzwert der mittleren kinetische Energie  für masselose Theore (analytisch)!!!!!!!!!!!!!!!
 	//
 	fstream Energy;
          Energy.open("kinEnergy.dat", ios::out);
          double v2;
-         v2=9.0/25.0*so.temperature/so.mass+16.0/25.0*pow(so.v0,2.0);
+         v2=4.0/9.0*so.temperature/so.mass+4.0/9.0*pow(so.v0,2.0);
          for (int i=0; i<results.tVec.size();i++)
 	 {
 	   Energy << results.tVec.at(i) << " " << 1.0/2.0*so.mass*v2 << endl;
 	 }
 	 ///
 	 
-	 
+   //-----------------------------Corr3----------------------------------
 	 
 	 
     //computations for P(kappa)
@@ -986,6 +1012,7 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 	//correlation of colored noise
 	vector<double> corrAv(so.nSteps, 0.0);
 	vector<double> corrAvTotal(so.nSteps, 0.0);
+	//void buildCorrAv(vector<double>& vec, const vector< vector<double> >& allNoise, const int& startN, const int& endN)
 	buildCorrAv(corrAv, noiseDiss.allNoise, 0, 0);
 	ksim.CorrAvVec.at(j)=corrAv;
 	if(j==so.avNum-1)

@@ -116,7 +116,7 @@ vector<double> generateCorrFunc3(const double& t0, const double& dt, const int& 
 
 // generate dissipation kernel
 //Gamma(t)=0.5/(k*T)*I(t) -- dissipation-fluctuation theorem
-vector<double> generateDissipationKernel(const int& nMax, const vector<double>& corrFunction,
+vector<double> generateDissipationKernel(const int& nMax, const vector<double>& corrFunction,const int& corrFuncNr, const double& minAlpha,
 					 const double& temperature, const double& k, const bool& optimisationBool, const double& dPrecision)
 //Gamma(t)=0.5/(k*T)*I(t) -- dissipation-fluctuation theorem
 {
@@ -126,27 +126,57 @@ vector<double> generateDissipationKernel(const int& nMax, const vector<double>& 
   //cout << maxN << " " << nMax << " " << corrFunction.size() << endl;
   if (optimisationBool)
   {
-    do
+    if(corrFuncNr==0 || corrFuncNr==1 || corrFuncNr==2)
     {
-      output.at(i) = 0.5/(k*temperature)*corrFunction.at(i);
-      i++;
-    }
-    while ((i < maxN) && (output.at(i-1) > dPrecision)); // dPrecision=10**(-3)
-    int finalN = i;
-    output.resize(finalN);
-    if (output.at(finalN-1) > dPrecision)
-    {
-      printf("Attention! Last entry of dissipationKernel (%.4f)"
+      do
+      {
+	output.at(i) = 0.5/(k*temperature)*corrFunction.at(i);
+	i++;
+      }
+      while ((i < maxN) && (output.at(i-1) > dPrecision)); // dPrecision=10**(-3)
+      int finalN = i;
+      output.resize(finalN);
+      if (output.at(finalN-1) > dPrecision)
+	{
+	  printf("Attention! Last entry of dissipationKernel (%.4f)"
     		  "is greater than minimum wanted (%.4f) using optimisation.\n"
     		  "Make nFourier higher for exacter final values of dissipationKernel.\n", output.at(finalN-1), dPrecision);
+	}
+    }
+  
+    
+    else
+    {
+      do
+      {
+	output.at(i) = 0.5/(k*temperature)*corrFunction.at(i);
+	i++;
+      }
+      while (output.at(i)>=-0.01); // dPrecision=10**(-3) 
+      /*do
+      {
+	output.at(i) = 0.5/(k*temperature)*corrFunction.at(i);
+	i++;
+      }
+      while ((i < maxN) && (fabs(output.at(i-1)) > dPrecision));*/
+      
+      int finalN = i;
+      output.resize(finalN);
+      if (output.at(finalN-1) > dPrecision)
+	{
+	  printf("Attention! Last entry of dissipationKernel (%.4f)"
+    		  "is greater than minimum wanted (%.4f) using optimisation.\n"
+    		  "Make nFourier higher for exacter final values of dissipationKernel.\n", output.at(finalN-1), dPrecision);
+	}
     }
   }
+  
   else
   {
-   for(int j=0; j<maxN; j++)
-   {
-    output.at(j) = 0.5/(k*temperature)*corrFunction.at(j); 
-   }
+    for(int j=0; j<maxN; j++)
+    {
+      output.at(j) = 0.5/(k*temperature)*corrFunction.at(j); 
+    }
   }
   return output;
 }
@@ -173,16 +203,18 @@ void calcG(const double& dt, const vector<double>& corrFunc,const int& corrFuncN
    vector<double> Mei(doubleCorrFunc.size()/2);
    linspace(0.0, dw, specOmega);
    linspace(0.0, dt, time);
-//       fstream A,B;
-//      A.open("fourier.dat", ios::out);
+       fstream A,B;
+      A.open("fourier.dat", ios::out);
 //       B.open("Mei.dat", ios::out);
   // in-place halfcomplex fourier transform
   gsl_fft_real_radix2_transform (G_array, 1, 2*steps);
+  
+  
   // prepare for inverse fourier transform
   for (int i = 0; i < steps+1; i++)
   {
      G_array[i] = G_array[i]*dt;
-      //A << specOmega.at(i) << " " << G_array[i] << endl;
+     A << specOmega.at(i) << " " << G_array[i] << endl;
      G_array[i] = sqrt(fabs(G_array[i]));
   }
   // set imaginary part to 0, since the correlation function is symmetric with respect to the midpoint
@@ -218,7 +250,7 @@ void calcG(const double& dt, const vector<double>& corrFunc,const int& corrFuncN
       G_array[i] = G_array[i]/dt;
       i++;
     }
-    while ((i < steps) && (fabs(G_array[i-1]) > gPrecision && (G_array[i-1]<0)));
+    while ((i < steps) && (fabs(G_array[i-1]) > gPrecision && (G_array[i-1]<0 || G_array[i-1]>0)));
     nG = i; 
     }
   }
@@ -259,6 +291,37 @@ NoiseDiss::NoiseDiss(SimulationOptions& so){
 		//todo ErrorMessage
 		break;
 	  }
+
+	  
+	  
+    fstream Gam,GamOm;
+    Gam.open("Gam.dat", ios::out);
+    GamOm.open("GamOm.dat", ios::out);
+    double dom;
+    double om=0.0;
+    double tkernel=0.0;
+    dom = M_PI/so.dt/(2.0*so.nFourier/2+1);
+    vector<double> specOm(2.0*so.nFourier/2+1);
+    vector<double> kernel(so.nSteps);
+    
+    for(int i=0; i<kernel.size(); i++)  //Kernel
+    {
+	
+      kernel.at(i)=1.0/4.0*so.alpha*so.alpha*(1-so.alpha/sqrt(so.mass)*tkernel)*exp(-so.alpha/sqrt(so.mass)*tkernel);
+      Gam << tkernel << " " << kernel.at(i) << endl ;
+      tkernel += so.dt; 
+      
+    }
+    
+     for(int i=0; i<specOm.size(); i++)  //FourierTrafo des Kernels
+    {
+      //specOm.at(i)=so.D/(1.0+so.tau*so.tau*om*om);  //FourierTrafo von Corr0
+      //specOm.at(i)=so.D*exp(-(so.a*om/2.0)*(so.a*om/2.0));   //FourierTrafo von Corr1
+      specOm.at(i)=2.0*so.k_b*so.temperature*pow(so.alpha,3.0)*pow(om,2.0)/(sqrt(so.mass)*pow(pow(om,2.0)+pow(so.alpha,2.0)/so.mass,2.0));
+      GamOm << om << " " << specOm.at(i) << endl ;
+      om += dom; 
+      
+    }
 	  // ----prepare simulation functions and dependent variables----
 	  this->tFourierVec.resize(so.nFourier, 0.0);  // all times for nFourier steps       
 
@@ -268,7 +331,7 @@ NoiseDiss::NoiseDiss(SimulationOptions& so){
 	  this->allNoise.resize(so.np, vector<double>(so.nSteps, 0.0));
 	  linspace(0.0, so.dt, this->tFourierVec);
 	  this->corrFVec = this->corrFunc(0.0, so.dt, so.nFourier); // erstes Argument ist t0, zweites "nSteps"                        //erzeugt korrelationsfunktion
-      this->dispKernel = generateDissipationKernel(so.nSteps, corrFVec, so.temperature, so.k_b, so.optimisationBool, so.dPrecision);	//erzeugt Dissipationskernel
+      this->dispKernel = generateDissipationKernel(so.nSteps, corrFVec,so.corrFuncNr,so.minAlpha, so.temperature, so.k_b, so.optimisationBool, so.dPrecision);	//erzeugt Dissipationskernel
       //generateDissipationKernel(so.nSteps, corrFVec, so.temperature, so.k_b, so.optimisationBool, so.dPrecision);
 	  calcG(so.dt, corrFVec,so.corrFuncNr, so.optimisationBool, so.gPrecision, this->G);
 	  this->tGVec.resize(G.size(), 0.0);
