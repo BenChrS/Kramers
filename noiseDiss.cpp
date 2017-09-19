@@ -152,13 +152,13 @@ vector<double> generateDissipationKernel(const int& nMax, const vector<double>& 
 	output.at(i) = 0.5/(k*temperature)*corrFunction.at(i);
 	i++;
       }
-      while (output.at(i)>=-0.01); // dPrecision=10**(-3) 
-      /*do
+      while (i <maxN && output.at(i-1)>=-0.06); // dPrecision=10**(-3) 
+      do
       {
 	output.at(i) = 0.5/(k*temperature)*corrFunction.at(i);
 	i++;
       }
-      while ((i < maxN) && (fabs(output.at(i-1)) > dPrecision));*/
+      while ((i < maxN) && (fabs(output.at(i-1)) > dPrecision));
       
       int finalN = i;
       output.resize(finalN);
