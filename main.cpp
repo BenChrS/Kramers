@@ -89,8 +89,8 @@ int main(int argc, char** argv) {  //argc: 1, argv[0]: ./colnoise
 
 	SimulationOptions so;
         Filenames filenames;
-	Foldernames foldernames("test", so);
-//  	Foldernames foldernames(currentDateString, so);
+//	Foldernames foldernames("test", so);
+  	Foldernames foldernames(currentDateString, so);
 
 	if (printWarning(so) == -1){
 		return -1;
@@ -140,7 +140,7 @@ int i;
 		
 		//cout << "omp " << omp_get_thread_num() << endl;
 		//calculate noise
-		noiseDiss.noiseFunc(so.dt, noiseDiss.randGen.at(omp_get_thread_num()), noiseDiss.allNoise.at(i));
+		//noiseDiss.noiseFunc(so.dt, noiseDiss.randGen.at(omp_get_thread_num()), noiseDiss.allNoise.at(i));
 	        //calculate all steps
 		sdeSolver.sdeSolverFunc(results.tVec, results.x0Vec.at(i), results.v0Vec.at(i), so.mass,noiseDiss.allNoise.at(i), results.allX.at(i), results.allV.at(i), potential.forceFunc);
 	}  
