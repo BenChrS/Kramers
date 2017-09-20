@@ -140,7 +140,7 @@ int i;
 		
 		//cout << "omp " << omp_get_thread_num() << endl;
 		//calculate noise
-		//noiseDiss.noiseFunc(so.dt, noiseDiss.randGen.at(omp_get_thread_num()), noiseDiss.allNoise.at(i));
+		noiseDiss.noiseFunc(so.dt, noiseDiss.randGen.at(omp_get_thread_num()), noiseDiss.allNoise.at(i));
 	        //calculate all steps
 		sdeSolver.sdeSolverFunc(results.tVec, results.x0Vec.at(i), results.v0Vec.at(i), so.mass,noiseDiss.allNoise.at(i), results.allX.at(i), results.allV.at(i), potential.forceFunc);
 	}  
