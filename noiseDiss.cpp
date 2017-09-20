@@ -152,7 +152,7 @@ vector<double> generateDissipationKernel(const int& nMax, const vector<double>& 
 	output.at(i) = 0.5/(k*temperature)*corrFunction.at(i);
 	i++;
       }
-      while (i <maxN && output.at(i-1)>=-0.01); // dPrecision=10**(-3) 
+      while (i <maxN && output.at(i-1)>=-0.01); //  muss an Minimum von Gamma angepasst werden
       do
       {
 	output.at(i) = 0.5/(k*temperature)*corrFunction.at(i);
@@ -250,7 +250,14 @@ void calcG(const double& dt, const vector<double>& corrFunc,const int& corrFuncN
       G_array[i] = G_array[i]/dt;
       i++;
     }
-    while ((i < steps) && (fabs(G_array[i-1]) > gPrecision && (G_array[i-1]<0 || G_array[i-1]>0)));
+    while ((i < steps) && G_array[i-1]>=-0.06); // muss an Minimum von G(t) angepasst werden
+    
+    do
+    {
+      G_array[i] = G_array[i]/dt;
+      i++;
+    }
+    while ((i < steps) && fabs(G_array[i-1]) > gPrecision);
     nG = i; 
     }
   }
