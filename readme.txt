@@ -56,3 +56,19 @@ parameters
 		x0=0
 		v0=0
 		duration: 50 minutes
+
+	Corr3:
+		(1)
+		temperature=1
+		mass=0.1
+		T=5
+		alpha=2*sqrt(m)
+		gammMin -0.01
+		MeijerGMin -0.06
+		
+		(2)
+		temperature=1
+		mass=0.1
+		T=1
+		alpha=10*sqrt(m)
+		gammMin -0.3

@@ -1117,41 +1117,58 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 	//writeToFile(results.tVec,fluxNegative,filenames.fluxNegative,headerString,foldernames.main);
 	
 	
-	
 	//-------------------------kramers----------------------
-	
-	if(j==so.avNum-1)  //erst bei letztem Durchlauf ausgeben!
-	{
-	double kramersTheo;
-	double kramersTheo1;
-	double a;
-	double gammaFre;
-	double omegaB=sqrt(4*so.Ub/(so.mass*pow((so.xb-so.xc),2.0)));
-	double omegaC=omegaB;
-	gammaFre = so.gamma/so.mass;
-	
-	cout << "gamma/m : " << gammaFre << endl;
-	cout << "xc " << so.xc << endl;
-	cout << "temperature " << so.temperature << endl;
-	cout << "mass " << so.mass << endl;
-	cout << "mass*omegaB² " << so.mass*pow(omegaB,2.0) << endl;
-	if(omegaB==gammaFre)
-	  
-	{cout << "omegaB==gamma/m " << gammaFre << endl;}
-	
-	a=sqrt(4.0)/(0.6*2*M_PI)*(sqrt(5.0/4.0)-1.0/2.0);
-	cout << "a " << a << endl;
-	cout << "exp(-Ub/T) " << exp(-so.Ub/(so.k_b*so.temperature)) << endl;
-	cout << "sqrt(Ub/m) " << sqrt(so.Ub/so.mass) << endl;
-	cout << "1/xc " << 1.0/so.xc << endl;
-	cout << "gamma " << so.gamma << " m*wb " << so.mass*omegaB << endl;
-	
-	kramersTheo = (sqrt(pow(gammaFre,2.0)/4.0+pow(omegaB,2.0))-gammaFre/2.0)/omegaB*omegaC/(2.0*M_PI)*exp(-so.Ub/(so.k_b*so.temperature));
-	kramersTheo1 = a*exp(-so.Ub/(so.k_b*so.temperature))*sqrt(so.Ub/so.mass)*1/so.xc;
-	cout << "kramersTheo " << kramersTheo << " " << "kramersTheo1 " << kramersTheo1 << endl;
-	cout << "kramersNumAv " << averageKramers << " Varianz " << variance <<  endl;
+	if(so.Kramers==1 || so.noiseNr==2)
+	{  
+	  if(j==so.avNum-1)  //erst bei letztem Durchlauf ausgeben!
+	  {
+	    double kramersTheo;
+	    double kramersTheo1;
+	    double a;
+	    double gammaFre;
+	    double omegaB=sqrt(4*so.Ub/(so.mass*pow((so.xb-so.xc),2.0)));
+	    double omegaC=omegaB;
+	    gammaFre = so.gamma/so.mass;
+	    
+	    cout << "beta=gamma/m : " << gammaFre << endl;
+	    cout << "xc " << so.xc << endl;
+	    cout << "temperature " << so.temperature << endl;
+	    cout << "mass " << so.mass << endl;
+	    cout << "mass*omegaB² " << so.mass*pow(omegaB,2.0) << endl;
+	    if(omegaB==gammaFre)
+	      
+	    {cout << "omegaB==gamma/m " << gammaFre << endl;}
+	    
+	    if(so.noiseNr==1)
+	    {
+	      cout << "WhiteNoise" << endl; 
+	      a=sqrt(4.0)/(0.6*2*M_PI)*(sqrt(5.0/4.0)-1.0/2.0);
+	      cout << "a " << a << endl;
+	      cout << "exp(-Ub/T) " << exp(-so.Ub/(so.k_b*so.temperature)) << endl;
+	      cout << "sqrt(Ub/m) " << sqrt(so.Ub/so.mass) << endl;
+	      cout << "1/xc " << 1.0/so.xc << endl;
+	      cout << "gamma " << so.gamma << " m*wb " << so.mass*omegaB << endl;
+	      
+	      kramersTheo = (sqrt(pow(gammaFre,2.0)/4.0+pow(omegaB,2.0))-gammaFre/2.0)/omegaB*omegaC/(2.0*M_PI)*exp(-so.Ub/(so.k_b*so.temperature));
+	      kramersTheo1 = a*exp(-so.Ub/(so.k_b*so.temperature))*sqrt(so.Ub/so.mass)*1/so.xc;
+	      cout << "kramersTheo " << kramersTheo << " " << "kramersTheo1 " << kramersTheo1 << endl;
+	      cout << "kramersNumAv " << averageKramers << " Varianz " << variance <<  endl;
+	    }
+	    else if(so.noiseNr==2)
+	    {
+	      cout << "ColNoise" << endl;
+	      cout << "Realteile der Eigenwerte " << endl
+		   << "l1 " << so.aColoured << " " << "l2 " << so.bColoured << " " << "l3 " << so.cColoured << endl;
+	      kramersTheo =omegaC*so.aColoured/(2.0*M_PI*omegaB)*exp(-so.Ub/(so.k_b*so.temperature));
+	      cout << "kramersTheo " << kramersTheo << endl;
+	      cout << "kramersNumAv " << averageKramers << " Varianz " << variance <<  endl;
+	    }
+	    else
+	    {
+		cout << "Weder farbiges noch weißes Rauschen! " << endl;   
+	    }
+	  }
 	}
-	
 	//------------------------------------------------------
 	
 	

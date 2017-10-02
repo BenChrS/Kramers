@@ -85,24 +85,24 @@ void SimulationOptions::setInitValues(){
 	input.close();
 	//physical settings
 	this->k_b = 1; // k_boltzmann constant
-	this->temperature = 1.0; //2.0
-	this->mass =0.1;//1.0/16.0*this->temperature; //1.0; //mass of particle
-	this->D = 10; //note: shouldn't influence evolution related to correlation function 3
+	this->temperature = 0.25; //2.0
+	this->mass =1.0;//1.0/16.0*this->temperature; //1.0; //mass of particle
+	this->D = 1.5; //note: shouldn't influence evolution related to correlation function 3
         //this->tau = 5; // see paper /only important for first correlation function
 	//this->a = 7.6; // only important for second correlation function
 	//this->chi=3.5;//correlation time for third correlation function
- 	this->alpha=2.0*sqrt(this->mass); // correlation time for massless theory // Einheit Masse/Zeit alpha=sqrt(mass)*alpha' 
+ 	this->alpha=10.0*sqrt(this->mass); // correlation time for massless theory // Einheit Masse/Zeit alpha=sqrt(mass)*alpha' 
 			//alpha=sqrt(mass) für alpha'=1 , alpha' ist inverse Korrelationszeit
 	this->minAlpha=-this->alpha*this->alpha/4.0*exp(-2.0);  //Minimum des Kernels
 
 	//statistical/program settings
  	this->t0 = 0.0; //time interval [t0, t1]
-        this->t1 = 5;     //1.0: für kb*T=0.5 Limes
-	this->tSettling = 5.0; // time needed for I(t) to be approximately 0
+        this->t1 = 10.0;     //1.0: für kb*T=0.5 Limes
+	this->tSettling = 10.0; // time needed for I(t) to be approximately 0
 	this->timeSettled = (this->t1-this->t0)/3.0; //approximate time particles need to be in equilibrium - only important for kinetic Energy Average - not yet in external call
-        this->nStepsFactor = 1;//round(this->t1-this->t0);
-        this->nStepsTwo = 15;   //15: für kb*T=0.5 Limes
-	this->nSteps =nStepsFactor*pow(2, this->nStepsTwo); ///2000; // number of final datapos (stored), must be devidable by 2
+        this->nStepsFactor = 30;//round(this->t1-this->t0);
+        this->nStepsTwo = 7;   //15: für kb*T=0.5 Limes
+	this->nSteps =2000;//nStepsFactor*pow(2, this->nStepsTwo); ///2000; // number of final datapos (stored), must be devidable by 2
         //this->npTen=4;
         //this->npTwo=0;
 	this->np = pow(10,npTen)*pow(2,this->npTwo); //number of averaged simulations (number of particles)
@@ -152,9 +152,9 @@ void SimulationOptions::setInitValues(){
 	this->potStartTime = 1.0; //for potential 5
 	this->potEndTime = 5.0; //for potential 5
 	
-	this->xc=10;
+	this->xc=1;
 	this->xb=1.6*this->xc;
-	this->Ub=2.0*this->k_b*this->temperature;
+	this->Ub=0.36*this->k_b*this->temperature;
 	
 // 	this->mass = this->Ub/2.0; // Test für Skalierungsverhalten Ub/m=2
 	
@@ -186,48 +186,77 @@ void SimulationOptions::setInitValues(){
     // wähle Anfangsbedingungen für Vergleich mit paper oder beliebig
     if(this->paperBool==0)
     {
-      x0=0.0;//1.0*this->xc;
+      x0=1.0*this->xc;
       v0=0.0;
+      
+      if(this->noiseNr==2)
+      {
+	this->gamma = this->D/(2.0*this->k_b*this->temperature);
+	 double time;
+	time=this->tau;
+	cout << time << " " << this->potw << " " << this->gamma << endl;
+	//Eigenwerte für inverses harmonisches Potenzial
+	 double a,ny,my,d,u,v;
+	 a=1.0/(3.0*time);
+	 //cout << "a" << " " <<a << endl;
+	 ny=-1.0+3.0*this->gamma*time-3.0*pow((this->potw*time),2.0);
+	 cout << "ny" << " " <<ny << endl;
+	 my=-1.0+9.0/2.0*this->gamma*time+9.0*pow((this->potw*time),2.0);
+	 cout << "my" << " " <<my << endl;
+	 d=sqrt(pow(my,2.0)+pow(ny,3.0));
+	 cout << "d" << " " <<d << endl;
+	 u=cbrt(my+d);
+	 cout << u << " " << v << endl;
+	 v=cbrt(my-d);
+	 this->aColoured=-a+a*u+a*v; //eingevalue for coloured noise 
+	 cout << "l1 " << this->aColoured << endl;
+	 this->bColoured=-1.0/2.0*(1/time+this->aColoured);
+	 this->cColoured=-1.0/2.0*(1/time+this->aColoured);
+      }
     }
-    else{ //Berechnung der Anfangsgeschwindigkeit über die entsprechenden Eigenwerte 
+    else
+    { //Berechnung der Anfangsgeschwindigkeit über die entsprechenden Eigenwerte 
 	if(this->potNr==1 & this->potK<0 & this->transition==false)
 	{
 	  cout << potK  << " " << "..." << endl;
-    this->x0 = -1;	
-    this->potB1 = 0.5*this->mass*pow(this->potw,2)*pow(this->x0,2); // height of the inverse harmonic function to be overcome by the particle
-    this->temperature = this->potB1/2; // setze Temperatur mit Höhe des Potenzials in Verbindung um zu gewährleisten, dass T auf jeden Fall kleiner ist als Schwelle !
-    this->gamma = this->D/(2.0*this->k_b*this->temperature);
-    if(this->noiseNr==1)
-    {
-    this->aWhite=0.5*(sqrt(pow((this->gamma),2)+4*pow(this->potw,2))-this->gamma); //eigenvalue for white noise
-    this->potB_eff = pow((this->potw/this->aWhite),2)*this->potB1;
-    }
-    else if(this->noiseNr==2)
-    {
-      cout << "noiseNr==2" << endl;
-      double time;
-     
-      time=this->tau;
-	
-	
-	//cout << "time" << " " <<time << endl;
-      double a,b,c,d;
-      a=1.0/(3.0*time);
-      //cout << "a" << " " <<a << endl;
-      b=-1.0+3.0*this->gamma*time-3.0*pow((this->potw*time),2);
-      //cout << "b" << " " <<b << endl;
-      c=-1.0+9.0/2.0*this->gamma*time+9.0*pow((this->potw*time),2);
-      //cout << "c" << " " <<c << endl;
-      d=sqrt(pow((c),2)+pow((b),3));
-      //cout << "d" << " " <<d << endl;
-    this->aColoured=-a-a*b/pow((c+d),1.0/3.0)+a*pow((c+d),1.0/3.0); //eingevalue for coloured noise 
-    this->bColoured=-1/2*(1/time+this->aColoured);
-    this->cColoured=-1/2*(1/time+this->aColoured);
-    //cout << "aColoured" << " " << aColoured<< endl;
-    this->potB_eff = pow((this->potw/this->aColoured),2)*this->potB1;
-    }
-       switch(this->B_eff)
-			     {
+	  this->x0 = -1;	
+	  this->potB1 = 0.5*this->mass*pow(this->potw,2)*pow(this->x0,2); // height of the inverse harmonic function to be overcome by the particle
+	  this->temperature = this->potB1/2; // setze Temperatur mit Höhe des Potenzials in Verbindung um zu gewährleisten, dass T auf jeden Fall kleiner ist als Schwelle !
+	  this->gamma = this->D/(2.0*this->k_b*this->temperature);
+	  if(this->noiseNr==1)
+	  {
+	    this->aWhite=0.5*(sqrt(pow((this->gamma),2)+4*pow(this->potw,2))-this->gamma); //eigenvalue for white noise
+	    this->potB_eff = pow((this->potw/this->aWhite),2)*this->potB1;
+	  }
+	  
+	  else if(this->noiseNr==2)
+	  {
+	    cout << "noiseNr==2" << endl;
+	    double time;
+	  
+	    time=this->tau;
+	      
+	      
+	      //cout << "time" << " " <<time << endl;
+	    double a,ny,my,d,u,v;
+	    a=1.0/(3.0*time);
+	    //cout << "a" << " " <<a << endl;
+	    ny=-1.0+3.0*this->gamma*time-3.0*pow((this->potw*time),2);
+	    //cout << "b" << " " <<b << endl;
+	    my=-1.0+9.0/2.0*this->gamma*time+9.0*pow((this->potw*time),2);
+	    //cout << "c" << " " <<c << endl;
+	    d=sqrt(pow((my),2)+pow((ny),3));
+	    //cout << "d" << " " <<d << endl;
+	    u=pow((my+d),1.0/3.0);
+	    v=pow((my-d),1.0/3.0);
+	    this->aColoured=-a+a*u+a*v; //eingevalue for coloured noise 
+	    this->bColoured=-1/2*(1/time+this->aColoured);
+	    this->cColoured=-1/2*(1/time+this->aColoured);
+	    //cout << "aColoured" << " " << aColoured<< endl;
+	    this->potB_eff = pow((this->potw/this->aColoured),2)*this->potB1;
+	  }
+	  switch(this->B_eff)
+	  {
 			       case 0:{
 				  this->v0=0; }break;
 			       case 1:{
@@ -236,7 +265,7 @@ void SimulationOptions::setInitValues(){
 				  this->v0 = sqrt(2*this->potB_eff/this->mass);}break;
 			       case 3:{
 			          this->v0 = sqrt(4*this->potB_eff/this->mass);}break;
-			     }
+	  }
 
 	}
     }
@@ -289,8 +318,8 @@ void SimulationOptions::setInitValues(){
 
 
 void SimulationOptions::setDependentVariables(){
-this->dt = (t1-t0)/((double)nSteps);
-// this->dt = (5*xc)/((double)nSteps); //mit passendem Skalierungsverhalten für Pot 7
+//this->dt = (t1-t0)/((double)nSteps);
+ this->dt = (10*xc)/((double)nSteps); //mit passendem Skalierungsverhalten für Pot 7
 cout << "dt " << dt << " mass " << mass << endl;
 
   //----prepare simulations----
