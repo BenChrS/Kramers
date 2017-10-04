@@ -544,7 +544,7 @@ void averageFluxLeftRight(vector<double>& vec, double& averageRate,double& varia
   averageRate = 0.0;
   variance=0.0;
   
-  for(i=280; i < vec.size(); i++) // bei t=25 hat der Fluss seine Grenzwert erreicht (nSteps=1000)
+  for(i=1200; i < vec.size(); i++) // bei t=25 hat der Fluss seine Grenzwert erreicht (nSteps=1000)
   {
     averageRate += vec.at(i); 
     k += 1;
@@ -552,7 +552,7 @@ void averageFluxLeftRight(vector<double>& vec, double& averageRate,double& varia
   cout << k << endl;
   averageRate = averageRate/k; // Mittelung über alle verbleibenden 800 Zeitschritte
   
-  for(i=280; i < vec.size();i++)
+  for(i=1200; i < vec.size();i++)
   {
     variance +=  pow(vec.at(i)-averageRate,2.0);
   }

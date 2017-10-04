@@ -28,14 +28,14 @@ void SimulationOptions::setInitValues(){
 	// read from file:
 	ifstream input;
 	input.open("input.txt");
-		getline(input,temp_string);
-		stringstream(temp_string) >> this->tau;
+		//getline(input,temp_string);
+		//stringstream(temp_string) >> this->tau;
 		getline(input,temp_string);
 		stringstream(temp_string) >> this->a;
 		getline(input,temp_string);
 		stringstream(temp_string) >> this->chi;
- 		getline(input,temp_string);
- 		stringstream(temp_string) >> this->potw;
+ 		//getline(input,temp_string);
+ 		//stringstream(temp_string) >> this->potw;
 //  		getline(input,temp_string);
 // 		stringstream(temp_string) >> this->D;
 // 		getline(input,temp_string);
@@ -85,10 +85,10 @@ void SimulationOptions::setInitValues(){
 	input.close();
 	//physical settings
 	this->k_b = 1; // k_boltzmann constant
-	this->temperature = 0.25; //2.0
-	this->mass =1.0;//1.0/16.0*this->temperature; //1.0; //mass of particle
-	this->D = 1.5; //note: shouldn't influence evolution related to correlation function 3
-        //this->tau = 5; // see paper /only important for first correlation function
+	this->temperature = 1.0; //2.0
+	this->mass =0.1*this->temperature;//1.0/16.0*this->temperature; //1.0; //mass of particle
+	this->D = 6.0; //note: shouldn't influence evolution related to correlation function 3
+        this->tau = 1.0; // see paper /only important for first correlation function
 	//this->a = 7.6; // only important for second correlation function
 	//this->chi=3.5;//correlation time for third correlation function
  	this->alpha=10.0*sqrt(this->mass); // correlation time for massless theory // Einheit Masse/Zeit alpha=sqrt(mass)*alpha' 
@@ -97,7 +97,7 @@ void SimulationOptions::setInitValues(){
 
 	//statistical/program settings
  	this->t0 = 0.0; //time interval [t0, t1]
-        this->t1 = 10.0;     //1.0: für kb*T=0.5 Limes
+        this->t1 = 100.0;     //1.0: für kb*T=0.5 Limes
 	this->tSettling = 10.0; // time needed for I(t) to be approximately 0
 	this->timeSettled = (this->t1-this->t0)/3.0; //approximate time particles need to be in equilibrium - only important for kinetic Energy Average - not yet in external call
         this->nStepsFactor = 30;//round(this->t1-this->t0);
@@ -152,9 +152,9 @@ void SimulationOptions::setInitValues(){
 	this->potStartTime = 1.0; //for potential 5
 	this->potEndTime = 5.0; //for potential 5
 	
-	this->xc=1;
+	this->xc=10;
 	this->xb=1.6*this->xc;
-	this->Ub=0.36*this->k_b*this->temperature;
+	this->Ub=2.5*this->k_b*this->temperature;
 	
 // 	this->mass = this->Ub/2.0; // Test für Skalierungsverhalten Ub/m=2
 	
@@ -191,17 +191,20 @@ void SimulationOptions::setInitValues(){
       
       if(this->noiseNr==2)
       {
+	this->potw= sqrt(4*this->Ub/(this->mass*pow((this->xb-this->xc),2.0)));
 	this->gamma = this->D/(2.0*this->k_b*this->temperature);
 	 double time;
+	 double beta;
+	 beta=this->gamma/this->mass;
 	time=this->tau;
-	cout << time << " " << this->potw << " " << this->gamma << endl;
+	cout << time << " " << this->potw << " " << this->gamma << " " << beta <<  endl;
 	//Eigenwerte für inverses harmonisches Potenzial
 	 double a,ny,my,d,u,v;
 	 a=1.0/(3.0*time);
 	 //cout << "a" << " " <<a << endl;
-	 ny=-1.0+3.0*this->gamma*time-3.0*pow((this->potw*time),2.0);
+	 ny=-1.0+3.0*beta*time-3.0*pow((this->potw*time),2.0);
 	 cout << "ny" << " " <<ny << endl;
-	 my=-1.0+9.0/2.0*this->gamma*time+9.0*pow((this->potw*time),2.0);
+	 my=-1.0+9.0/2.0*beta*time+9.0*pow((this->potw*time),2.0);
 	 cout << "my" << " " <<my << endl;
 	 d=sqrt(pow(my,2.0)+pow(ny,3.0));
 	 cout << "d" << " " <<d << endl;
