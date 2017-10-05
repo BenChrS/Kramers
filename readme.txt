@@ -44,6 +44,14 @@ sdeSolver
 4) eulerWhiteNoise
 
 
+Kramers:
+parameters
+	Markov: 	siehe simOpt auf Laptop
+
+	Non-Markov:	siehe simopt aktueller Simulationen 
+			(Stand 05.10.17)
+		
+
 kinEnerAv:
 parameters 
 	Corr0:
