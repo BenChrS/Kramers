@@ -86,9 +86,9 @@ void SimulationOptions::setInitValues(){
 	//physical settings
 	this->k_b = 1; // k_boltzmann constant
 	this->temperature = 1.0; //2.0
-	this->mass =0.1*this->temperature;//1.0/16.0*this->temperature; //1.0; //mass of particle
-	this->D = 6.0; //note: shouldn't influence evolution related to correlation function 3
-        this->tau = 100.0; // see paper /only important for first correlation function
+	this->mass =10.0/(5.0*5.0*0.6*0.6);//0.1*this->temperature;//1.0/16.0*this->temperature; //1.0; //mass of particle
+	this->D = 20.0/3.0;//6.0; //note: shouldn't influence evolution related to correlation function 3
+        this->tau = 1.0/5.0; // see paper /only important for first correlation function
 	//this->a = 7.6; // only important for second correlation function
 	//this->chi=3.5;//correlation time for third correlation function
  	this->alpha=10.0*sqrt(this->mass); // correlation time for massless theory // Einheit Masse/Zeit alpha=sqrt(mass)*alpha' 
@@ -97,7 +97,7 @@ void SimulationOptions::setInitValues(){
 
 	//statistical/program settings
  	this->t0 = 0.0; //time interval [t0, t1]
-        this->t1 = 100.0;     //1.0: für kb*T=0.5 Limes
+        //this->t1 = 10.0;     //1.0: für kb*T=0.5 Limes
 	this->tSettling = 10.0; // time needed for I(t) to be approximately 0
 	this->timeSettled = (this->t1-this->t0)/3.0; //approximate time particles need to be in equilibrium - only important for kinetic Energy Average - not yet in external call
         this->nStepsFactor = 30;//round(this->t1-this->t0);
@@ -152,9 +152,10 @@ void SimulationOptions::setInitValues(){
 	this->potStartTime = 1.0; //for potential 5
 	this->potEndTime = 5.0; //for potential 5
 	
-	this->xc=10;
+	this->xc=1;
+	this->t1 = 20.0*this->xc; 
 	this->xb=1.6*this->xc;
-	this->Ub=2.5*this->k_b*this->temperature;
+	this->Ub=2.5;   // units of wc   //2.5*this->k_b*this->temperature;
 	
 // 	this->mass = this->Ub/2.0; // Test für Skalierungsverhalten Ub/m=2
 	
@@ -191,7 +192,7 @@ void SimulationOptions::setInitValues(){
       
       if(this->noiseNr==2)
       {
-	this->potw= sqrt(4*this->Ub/(this->mass*pow((this->xb-this->xc),2.0)));
+	this->potw= 1.0;//sqrt(4*this->Ub/(this->mass*pow((this->xb-this->xc),2.0)));
 	this->gamma = this->D/(2.0*this->k_b*this->temperature);
 	double time;
 	double beta,om;
@@ -205,7 +206,8 @@ void SimulationOptions::setInitValues(){
 	
 	cout << "p: " << p << " " << "q: " << q << endl;
 	 
-	cout << time << " " << this->potw << " " << this->gamma << " " << beta <<  endl;
+	cout << "tau: " << time << " " << "wc: " << this->potw << " " << "gamma: " << this->gamma << " " << "beta: " 
+	     << beta <<  endl;
 	 
 	 //Eigenwerte für inverses harmonisches Potenzial
 	 double a,ny,my,d,u,v;
@@ -358,8 +360,8 @@ void SimulationOptions::setInitValues(){
 
 
 void SimulationOptions::setDependentVariables(){
-//this->dt = (t1-t0)/((double)nSteps);
- this->dt = (10*xc)/((double)nSteps); //mit passendem Skalierungsverhalten für Pot 7
+this->dt = (t1-t0)/((double)nSteps);
+ //this->dt = (10*xc)/((double)nSteps); //mit passendem Skalierungsverhalten für Pot 7
 cout << "dt " << dt << " mass " << mass << endl;
 
   //----prepare simulations----
