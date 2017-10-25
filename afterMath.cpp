@@ -1118,8 +1118,7 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 	
 	
 	//-------------------------kramers----------------------
-	if(so.Kramers==1 || so.noiseNr==2)
-	{  
+	
 	  if(j==so.avNum-1)  //erst bei letztem Durchlauf ausgeben!
 	  {
 	    double kramersTheo;
@@ -1149,10 +1148,13 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 	      cout << "1/xc " << 1.0/so.xc << endl;
 	      cout << "gamma " << so.gamma << " m*wb " << so.mass*omegaB << endl;
 	      
-	      kramersTheo = (sqrt(pow(gammaFre,2.0)/4.0+pow(omegaB,2.0))-gammaFre/2.0)/omegaB*omegaC/(2.0*M_PI)*exp(-so.Ub/(so.k_b*so.temperature));
-	      kramersTheo1 = a*exp(-so.Ub/(so.k_b*so.temperature))*sqrt(so.Ub/so.mass)*1/so.xc;
-	      cout << "kramersTheo " << kramersTheo << " " << "kramersTheo1 " << kramersTheo1 << endl;
+	      
+	      kramersTheo = omegaC*so.aWhite/(2.0*M_PI*omegaB)*exp(-so.Ub/(so.k_b*so.temperature));
+	      //kramersTheo = (sqrt(pow(gammaFre,2.0)/4.0+pow(omegaB,2.0))-gammaFre/2.0)/omegaB*omegaC/(2.0*M_PI)*exp(-so.Ub/(so.k_b*so.temperature));
+	      //kramersTheo1 = a*exp(-so.Ub/(so.k_b*so.temperature))*sqrt(so.Ub/so.mass)*1/so.xc;
+	      cout << "kramersTheo " << kramersTheo  << endl;
 	      cout << "kramersNumAv " << averageKramers << " Varianz " << variance <<  endl;
+	      cout << "kramersTheoWeakFric " << so.gamma/so.mass*so.Ub/so.temperature*exp(-so.Ub/(so.k_b*so.temperature)) << endl;
 	    }
 	    else if(so.noiseNr==2)
 	    {
@@ -1168,7 +1170,7 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 		cout << "Weder farbiges noch weißes Rauschen! " << endl;   
 	    }
 	  }
-	}
+	
 	//------------------------------------------------------
 	
 	

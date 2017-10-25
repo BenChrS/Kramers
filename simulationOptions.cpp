@@ -86,8 +86,8 @@ void SimulationOptions::setInitValues(){
 	//physical settings
 	this->k_b = 1; // k_boltzmann constant
 	this->temperature = 1.0; //2.0
-	this->mass =10.0/(5.0*5.0*0.6*0.6);//0.1*this->temperature;//1.0/16.0*this->temperature; //1.0; //mass of particle
-	this->D = 20.0/3.0;//6.0; //note: shouldn't influence evolution related to correlation function 3
+	this->mass =20.0/(25.0*0.6*0.6);//0.1*this->temperature;//1.0/16.0*this->temperature; //1.0; //mass of particle
+	this->D = 1.0;//40.0/3.0;//1.0;//6.0; //note: shouldn't influence evolution related to correlation function 3
         this->tau = 1.0/5.0; // see paper /only important for first correlation function
 	//this->a = 7.6; // only important for second correlation function
 	//this->chi=3.5;//correlation time for third correlation function
@@ -102,7 +102,7 @@ void SimulationOptions::setInitValues(){
 	this->timeSettled = (this->t1-this->t0)/3.0; //approximate time particles need to be in equilibrium - only important for kinetic Energy Average - not yet in external call
         this->nStepsFactor = 30;//round(this->t1-this->t0);
         this->nStepsTwo = 7;   //15: für kb*T=0.5 Limes
-	this->nSteps =2000;//nStepsFactor*pow(2, this->nStepsTwo); ///2000; // number of final datapos (stored), must be devidable by 2
+	this->nSteps =5000;//nStepsFactor*pow(2, this->nStepsTwo); ///2000; // number of final datapos (stored), must be devidable by 2
         //this->npTen=4;
         //this->npTwo=0;
 	this->np = pow(10,npTen)*pow(2,this->npTwo); //number of averaged simulations (number of particles)
@@ -128,7 +128,7 @@ void SimulationOptions::setInitValues(){
         //this->Kramers = 0;
 
 	//potential Settings
-	//this->potw =0.6; //frequency of the harmonic potential
+	this->potw= 5.0; //frequency of the harmonic potential
 	this->potK = -pow(this->potw,2.0)*this->mass; //for potential1
    	this->potDepth = 2; //for potenital2
 	this->potWidth = 4.0; //for potential2
@@ -153,9 +153,9 @@ void SimulationOptions::setInitValues(){
 	this->potEndTime = 5.0; //for potential 5
 	
 	this->xc=1;
-	this->t1 = 20.0*this->xc; 
+	this->t1 = 25.0*this->xc; 
 	this->xb=1.6*this->xc;
-	this->Ub=2.5;   // units of wc   //2.5*this->k_b*this->temperature;
+	this->Ub=5.0;   // units of wc   //2.5*this->k_b*this->temperature;
 	
 // 	this->mass = this->Ub/2.0; // Test für Skalierungsverhalten Ub/m=2
 	
@@ -192,7 +192,7 @@ void SimulationOptions::setInitValues(){
       
       if(this->noiseNr==2)
       {
-	this->potw= 1.0;//sqrt(4*this->Ub/(this->mass*pow((this->xb-this->xc),2.0)));
+	this->potw= 5.0;//sqrt(4*this->Ub/(this->mass*pow((this->xb-this->xc),2.0)));
 	this->gamma = this->D/(2.0*this->k_b*this->temperature);
 	double time;
 	double beta,om;
@@ -254,6 +254,14 @@ void SimulationOptions::setInitValues(){
 	  cout << "l3 " << this->cColoured << endl;
 	   
 	}
+      }
+      else
+      {
+	this->potw= 5.0;//sqrt(4*this->Ub/(this->mass*pow((this->xb-this->xc),2.0)));
+	this->gamma = this->D/(2.0*this->k_b*this->temperature);
+	double beta;
+	beta=this->gamma/this->mass;
+	this->aWhite=0.5*(sqrt(pow((beta),2)+4*pow(this->potw,2))-beta); //eigenvalue for white noise
       }
     }
     else
