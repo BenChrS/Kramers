@@ -38,19 +38,19 @@ void Results::setInitValues(const SimulationOptions &so){
 			case 1:
 			{
 				fill(this->x0Vec.begin(), this->x0Vec.end(), so.x0);
-                this->v0Vec = fillThermalized(so);
+				this->v0Vec = fillThermalizedVeloc(so);
 			} break;
 			// Gaussian (thermal) distribution in space and fixed velocity
 			case 2:
 			{
-                this->x0Vec = fillThermalized(so);
+				this->x0Vec = fillThermalizedPos(so);
 				fill(this->v0Vec.begin(), this->v0Vec.end(), so.v0);
 			} break;
 			// Gaussian (thermal) distribution in space and velocity
 			case 3:
 			{
-                this->x0Vec = fillThermalized(so);
-                this->v0Vec = fillThermalized(so);
+			      this->x0Vec = fillThermalizedPos(so);
+			      this->v0Vec = fillThermalizedVeloc(so);
 			} break;
 			default: {
 				printf("initCondNr unknown\n");
@@ -61,22 +61,26 @@ void Results::setInitValues(const SimulationOptions &so){
 }
 
 // the thermalised velocity of the "Brownian particle" is distributed according to a Gaussian
-vector<double> Results::fillThermalized(const SimulationOptions &so)
+vector<double> Results::fillThermalizedVeloc(const SimulationOptions &so)
 {
   vector<double> output(so.np);
-  //const gsl_rng_type * T;
-  //gsl_rng_env_setup();
-  //T = gsl_rng_default;
-  //long seed = time (NULL);
-  //gsl_rng * r;
-  //so.res_rng = gsl_rng_alloc (T);
-  cout << time(NULL) << endl;       //bei wenigen Teilchen ist time(NULL) an dieser Stelle identisch mit time(NULL) in noiseDiss
   gsl_rng_set (so.res_rng, so.seed);
   for (int i = 0; i < so.np; i++)
   {
     output.at(i) = gsl_ran_gaussian(so.res_rng, sqrt(so.k_b*so.temperature/so.mass));
   }
-  //gsl_rng_free(so.res_rng);  //würde bei nochmaligem Aufruf von so.res zu einem Fehler führen, weil dieses nicht mehr existent
+  return output;
+}
+
+// the thermalised position of the "Brownian particle" in parabolic potential is distributed according to a Gaussian
+vector<double> Results::fillThermalizedPos(const SimulationOptions &so)
+{
+  vector<double> output(so.np);
+  gsl_rng_set (so.res_rng, so.seed);
+  for (int i = 0; i < so.np; i++)
+  {
+    output.at(i) = so.x0 + gsl_ran_gaussian(so.res_rng, sqrt(so.k_b*so.temperature/(so.mass*so.potw)));
+  }
   return output;
 }
 

@@ -109,12 +109,20 @@ int main(int argc, char** argv) {  //argc: 1, argv[0]: ./colnoise
 	writeToFile(noiseDiss.tGVec, noiseDiss.G, filenames.fourier, headerString, foldernames.main);
 	writeToFile(results.tVec, noiseDiss.dispKernel, filenames.dispKernel, headerString, foldernames.main);
          
-// 	  fstream velocDist;h
-//           velocDist.open("velocDist.dat", ios::out);
-//           for(int k=0; k < results.v0Vec.size(); k++)
-//             {
-// 	    velocDist << "v0:" << " " << results.v0Vec.at(k) << endl; 
-// 	    }
+	  fstream velocDist,posDist;
+          velocDist.open("velocDist.dat", ios::out);
+          for(int k=0; k < results.v0Vec.size(); k++)
+            {
+	    velocDist << k << " " << results.v0Vec.at(k) << endl; 
+	    }
+	  velocDist.close();
+	  posDist.open("posDist.dat", ios::out);
+	  for(int k=0; k < results.x0Vec.size(); k++)
+            {
+	    posDist << k << " " << results.x0Vec.at(k) << endl; 
+	    }
+	  posDist.close();
+	  
 	
 
 	//----actual simulations----

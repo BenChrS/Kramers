@@ -294,39 +294,16 @@ void countRight(vector<double>& vec,vector<double>& vec1, vector<double>& transp
                 }
           }
         }
-//         if(i>0)
-//             {
-//              vec1.at(i) += vec1.at(i-1);
-//             }
 								      //akkumuliere Neu-Initialiserungen!!
       }
-//       for(int n=0;n<vec.size();n++){
-//      
-//      countRight << t << " " <<   vec.at(n) << " " << fluxLeft.at(n) << endl;
-// 	t += 0.1;
-//       }
-//      t=0.0;
-//       for(int i = 1; i < data.at(0).size(); i++)
-//       {
-//         if(i==0)
-//         {
-//           vec3.at(i) = vec.at(i);
-//         }
-//         else
-//         {
-//           vec3.at(i)= vec.at(i)+fluxLeft.at(i);  //total number of particles per time step (reinitialized particles included & backscattered particles included!)
-//         }
-//       }
+
 
     for(int i=0;i<vec.size();i++)
       {
 	for(int j=0;j<i+1;j++)
 	  {
 	  vec.at(i) += vec1.at(j);		//Neu-Initialisierung werden für jeden Zeitschritt akkumuliert
-// 	  vec.at(i) += fluxLeft.at(j);    	//Neu-Initialisierung und backscattering werden für jeden Zeitschritt akkumuliert
 	  }
-// 	kramersClean << t << " " << vec.at(i) << endl;
-// 	t += 0.1;
       }
   }
   else
@@ -371,14 +348,6 @@ int avnum = 1;
 double a=0.0;
 double b=0.0;
 
-// for(int i=0;i<rightDist.size();i++)
-// {
-//  for(int j=0;j<i+1;i++)
-//  {
-//    rightDist.at(i) += vec1.at(j);
-//  }
-// }
-
 for(int i=0; i< rightDist.size(); i++)
 { 
   
@@ -388,75 +357,10 @@ for(int i=0; i< rightDist.size(); i++)
   }
   else
   {
-  //vec.at(i)=vec1.at(i)-rightDist.at(i-1);
     vec.at(i)=rightDist.at(i)-rightDist.at(i-1);
-    //vec.at(i)=(rightDist.at(i+1)-rightDist.at(i-1))/2.0;
-    //if(i==rightDist.size()-1){
-    //vec.at(i)=rightDist.at(i)-rightDist.at(i-1);}
   }
 }
-// vec.front() = rightDist.at(1)-rightDist.at(0);
 
-// for(int i = 1; i < avnum; i++)
-//     {
-//         for(int j=i-1;j<i+1;j++)
-//         {
-//         a += vec1.at(j);
-//         }
-//           if(i<3)
-//           {
-//              for(int j=0;j<i-1;j++)
-//              {
-//              b += vec1.at(j);
-//              }
-//           }
-//          else
-//          {
-//             for(int j=i-3;j<i-1;j++)
-//             {
-//             b += vec1.at(j);
-//             }
-//           }
-//     vec.at(i)=(rightDist.at(i+1)+a-rightDist.at(i-1)-b)/2;
-//     }
-// 
-// for(int i = avnum; i < n-avnum; i++)
-//     {
-//         for(int j=i-avnum;j<i+avnum;j++)
-//         {
-//         a += vec1.at(j);
-//         }
-//           if(i<3*avnum)
-//           {
-//              for(int j=0;j<i-avnum;j++)
-//              {
-//              b += vec1.at(j);
-//              }
-//           }
-//          else
-//          {
-//              for(int j=i-3*avnum;j<i-avnum;j++)
-//              {
-//              b += vec1.at(j);
-//              }
-//          }
-//     vec.at(i)=(rightDist.at(i+avnum)+a-rightDist.at(i-avnum)-b)/(2*avnum);
-//     }
-// 
-// for(int i= n-avnum;i<n-1; i++)
-//     {
-//         for(int j=i-1;j<i+1;j++)
-//         {
-//         a += vec1.at(j);
-//         }
-//         for(int j=i-3;j<i-1;j++)
-//         {
-//         b += vec1.at(j);
-//         }
-//     vec.at(i)=(rightDist.at(i+1)+a-rightDist.at(i-1)-b)/2;
-//     }
-
-// vec.back()=rightDist.at(n-1)+vec1.at(n-2)-rightDist.at(n-2)-vec1.at(n-3);
 
 transform(vec.begin(), vec.end(), vec.begin(), bind1st(multiplies<double>(), 1.0/dt));
 }
@@ -576,10 +480,6 @@ void KramersFluxPaper(vector<double>& rate, const vector < vector<double> >& all
   vector<int> abs(allX.at(0).size(), 0);			//Zahl absorbierter Teilchen für jedes Zeitinkrement
   vector<int> absTotal(allX.at(0).size(), 0);
   vector<int> alrAbs(allX.size(), 0);				//Teilchen schon absorbiert? 0: nein; 1: ja
-//   vector<int> abs(nSteps, 0);				//Zahl absorbierter Teilchen für jedes Zeitinkrement
-//   vector<int> absTotal(nSteps, 0);
-//   abs.resize(allX.at(0).size(), 0);				//Zahl absorbierter Teilchen für jedes Zeitinkrement
-//   absTotal.resize(allX.at(0).size(), 0);
   rate.resize(allX.at(0).size(), 0.0);
 
   for(i=0;i<allX.at(0).size();i++)
@@ -1152,9 +1052,16 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 	      kramersTheo = omegaC*so.aWhite/(2.0*M_PI*omegaB)*exp(-so.Ub/(so.k_b*so.temperature));
 	      //kramersTheo = (sqrt(pow(gammaFre,2.0)/4.0+pow(omegaB,2.0))-gammaFre/2.0)/omegaB*omegaC/(2.0*M_PI)*exp(-so.Ub/(so.k_b*so.temperature));
 	      //kramersTheo1 = a*exp(-so.Ub/(so.k_b*so.temperature))*sqrt(so.Ub/so.mass)*1/so.xc;
+	      cout << "Ub " << so.Ub << endl;
+	      cout << "dt " << so.dt << endl;
+	      cout << "beta*Ib " << so.gamma/so.mass*2*M_PI*so.Ub/so.potw << endl;
 	      cout << "kramersTheo " << kramersTheo  << endl;
 	      cout << "kramersNumAv " << averageKramers << " Varianz " << variance <<  endl;
 	      cout << "kramersTheoWeakFric " << so.gamma/so.mass*so.Ub/so.temperature*exp(-so.Ub/(so.k_b*so.temperature)) << endl;
+	      if(so.gamma/so.mass*2*M_PI*so.Ub/so.potw<so.temperature)
+	      {
+		cout << "low friction" << endl;
+	      }
 	    }
 	    else if(so.noiseNr==2)
 	    {

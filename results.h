@@ -28,7 +28,8 @@ public:
 
 	Results(const SimulationOptions&);
 	void setInitValues(const SimulationOptions&);
-	vector<double> fillThermalized(const SimulationOptions&);
+	vector<double> fillThermalizedVeloc(const SimulationOptions&);
+	vector<double> fillThermalizedPos(const SimulationOptions&);
  };
  
  class KappaSimulation{
