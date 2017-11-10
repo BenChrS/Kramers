@@ -111,8 +111,23 @@ void calcVDistTheo(vector<double>& vec, const double& temperature, const double&
   v = rangeBeg + 0.5*delta;
   for (int i = 0; i < nBins; i++)
   {
-    vec.at(i) = pow(mass/(2.0*M_PI*k*temperature),0.5)*exp(-mass*v*v/(2.0*k*temperature));
+    vec.at(i) = sqrt(mass/(2.0*M_PI*k*temperature))*exp(-mass*v*v/(2.0*k*temperature));
     v += delta;
+  }
+}
+
+// returns the Maxwell Boltzmann probability density distribution for one dimension x in the range [rangeBeg, rangeEnd]
+void calcXDistTheo(vector<double>& vec, const double& temperature, const double& mass,const double& omega, const double& k, const double& rangeBeg, const double& rangeEnd, const int& nBins)
+{
+  vec.resize(nBins, 0.0);
+  double x;
+  double delta;
+  delta = (rangeEnd-rangeBeg)/nBins;
+  x = rangeBeg + 0.5*delta;
+  for (int i = 0; i < nBins; i++)
+  {
+    vec.at(i) = sqrt((mass*omega*omega)/(2.0*M_PI*k*temperature))*exp(-mass*omega*omega*x*x/(2.0*k*temperature));
+    x += delta;
   }
 }
 
@@ -264,17 +279,17 @@ void countRight(vector<double>& vec,vector<double>& vec1, vector<double>& transp
   vec3.resize(data.at(0).size(),0.0);
   double t=0.0;
  
-  vector<double> leftParticles;
-  vector<double> fluxLeft;
-  vector<double> fluxRight;
+//   vector<double> leftParticles;
+//   vector<double> fluxLeft;
+//   vector<double> fluxRight;
   
-  leftParticles.resize(data.at(0).size(),0.0);  
+//   leftParticles.resize(data.at(0).size(),0.0);  
   
-  fluxLeft.resize(data.at(0).size(),0.0);//fluxLeft behinhaltet schon neu-Initialiserung plus backscattering
-  fluxRight.resize(data.at(0).size(),0.0);
-  fluxLeftRight(fluxRight,fluxLeft,border,data,dt); //fluxLeft:  Anzahl der Teilchen, die von i-1 nach i auf linke Seite gewandert sind
+//   fluxLeft.resize(data.at(0).size(),0.0);//fluxLeft behinhaltet schon neu-Initialiserung plus backscattering
+//   fluxRight.resize(data.at(0).size(),0.0);
+//   fluxLeftRight(fluxRight,fluxLeft,border,data,dt); //fluxLeft:  Anzahl der Teilchen, die von i-1 nach i auf linke Seite gewandert sind
   
-  countLeft(leftParticles,data,border);  //Zähle Teilchen auf linker Seite für jeden Zeitschritt i -> für Normierung ?!?
+//   countLeft(leftParticles,data,border);  //Zähle Teilchen auf linker Seite für jeden Zeitschritt i -> für Normierung ?!?
   
   if(Kramers)
   {
@@ -282,29 +297,36 @@ void countRight(vector<double>& vec,vector<double>& vec1, vector<double>& transp
     countRight.open("kramersFlux.dat",ios::out);
     kramersClean.open("clean.dat",ios::out);
     for (int i = 0; i < data.at(0).size(); i++)
-      {
+    {
         for (int j = 0; j < data.size(); j ++)
         {
           if (data.at(j).at(i) > border)
           {
             vec.at(i) += 1;
             if(data.at(j).at(i) >=Kborder)
-                {
+            {
                 vec1.at(i) += 1;   //number of reinitialized particles per time interval
-                }
+            }
           }
         }
 								      //akkumuliere Neu-Initialiserungen!!
-      }
+    }
 
 
-    for(int i=0;i<vec.size();i++)
-      {
-	for(int j=0;j<i+1;j++)
-	  {
+//     for(int i=0;i<vec.size();i++)
+//     {
+// 	for(int j=0;j<i+1;j++)
+// 	{
+// 	  vec.at(i) += vec1.at(j);		//Neu-Initialisierung werden für jeden Zeitschritt akkumuliert
+// 	}
+//     }
+    for(int i=1;i<vec.size();i++)
+    {
+	for(int j=0;j<i;j++)
+	{
 	  vec.at(i) += vec1.at(j);		//Neu-Initialisierung werden für jeden Zeitschritt akkumuliert
-	  }
-      }
+	}					//wichtig: für den Zeitschritt i müssen von vec müssen nur die vorherigen Zeitschritte
+    }						//j<i aufaddiert werden 
   }
   else
   {
@@ -324,11 +346,21 @@ void countRight(vector<double>& vec,vector<double>& vec1, vector<double>& transp
   }
   
   
-  for(int i=0; i<vec.size() ; i++)
-  {
-      vec.at(i) = vec.at(i)/leftParticles.at(i);
-    
-  }
+//   for(int i=0; i<vec.size() ; i++)				/Normierung auf Teilchenzahl wird in calcFlux vorgenommen
+//   {
+//       vec.at(i) = vec.at(i)/leftParticles.at(i); 
+//   }
+//   for(int i=0; i<vec.size() ; i++)
+//   {
+//       if(i==0)
+//       {
+// 	vec.at(i)=0.0;
+//       }
+//       else
+//       {
+// 	vec.at(i) = vec.at(i)/leftParticles.at(i-1);
+//       }
+//   }
   /*transform(vec.begin(), vec.end(), vec.begin(), bind1st(multiplies<double>(), 1.0/data.size()));
   transform(vec1.begin(), vec1.end(), vec1.begin(), bind1st(multiplies<double>(), 1.0/data.size()));
   transform(vec3.begin(), vec3.end(), vec3.begin(), bind1st(multiplies<double>(), 1.0/data.size()));*/ //möglicherweise durch leftParticles.at(i) teilen!
@@ -338,31 +370,46 @@ int n = vec.size()-1;
 transprob.at(k) = vec.at(n);
 }
 
-void calcFlux(vector<double>& vec,const vector<double>& vec1,const vector<double>& rightDist,const double& dt) //header-Datei ergänzen!!
+void calcFlux(vector<double>& vec,const vector<double>& vec1,const vector<double>& rightDist,const double& dt,const vector< vector<double> >& data, const double& border,const bool& Kramers) 
 {/*
   calcFlux(flux,rightDistKramers,rightDist,so.dt);*/
-//vec1: reinitialized particles
-int n = rightDist.size();
-vec.resize(n,0.0);
-int avnum = 1;
-double a=0.0;
-double b=0.0;
+  //vec1: reinitialized particles
+  vector<double> leftParticles;
+  leftParticles.resize(rightDist.size(),0.0);
+  vec.resize(rightDist.size(),0.0);
+  countLeft(leftParticles,data,border);  //Zähle Teilchen auf linker Seite für jeden Zeitschritt i -> für Normierung 
 
-for(int i=0; i< rightDist.size(); i++)
-{ 
-  
-  if(i==0)
+  for(int i=0; i< rightDist.size(); i++)
+  { 
+    
+    if(i==0)
+    {
+    vec.at(i)=0.0;
+    }
+    else
+    {
+      vec.at(i)=rightDist.at(i)-rightDist.at(i-1);
+    }
+  }
+    
+  if(Kramers)
   {
-   vec.at(i)=0.0;
+    for(int i=0; i<vec.size() ; i++)
+    {
+	if(i==0)
+	{
+	  vec.at(i)=0.0;
+	}
+	else
+	{
+	  vec.at(i) = vec.at(i)/(leftParticles.at(i-1)*dt);
+	}
+    }
   }
   else
   {
-    vec.at(i)=rightDist.at(i)-rightDist.at(i-1);
+      transform(vec.begin(), vec.end(), vec.begin(), bind1st(multiplies<double>(), 1.0/dt));
   }
-}
-
-
-transform(vec.begin(), vec.end(), vec.begin(), bind1st(multiplies<double>(), 1.0/dt));
 }
 
 //counts number of the particles crossing the potential well for every time step
@@ -463,8 +510,8 @@ void averageFluxLeftRight(vector<double>& vec, double& averageRate,double& varia
   variance=1.0/(averageRate*sqrt(k))*sqrt(1.0/(k-1)*variance);
 }
 
-//KramersRate wie in Paper berechnet, backscattering von jenseits der Border noch nicht berücksichtigt
-void KramersFluxPaper(vector<double>& rate, const vector < vector<double> >& allX, const double& dt, const int& np, const double& border)
+//KramersRate wie in Paper berechnet
+void KramersFluxPaper(vector<double>& rate, const vector < vector<double> >& allX, const double& dt, const int& np, const double& Kborder)
 {
   
   fstream Paper1,Paper2;
@@ -482,11 +529,12 @@ void KramersFluxPaper(vector<double>& rate, const vector < vector<double> >& all
   vector<int> alrAbs(allX.size(), 0);				//Teilchen schon absorbiert? 0: nein; 1: ja
   rate.resize(allX.at(0).size(), 0.0);
 
-  for(i=0;i<allX.at(0).size();i++)
+  //für jeden Zeitschritt werden nacheinander alle Teilchen durchgegangen 
+  for(i=0;i<allX.at(0).size();i++) //Zeitschritte
   {
-    for(j=0;j<allX.size();j++)
+    for(j=0;j<allX.size();j++)		//Teilchen j
     {
-      if(allX.at(j).at(i)>=border && alrAbs.at(j)==0)
+      if(allX.at(j).at(i)>=Kborder && alrAbs.at(j)==0)
       {
 	absParticles++;
 	absParticlesTotal++;
@@ -502,8 +550,12 @@ void KramersFluxPaper(vector<double>& rate, const vector < vector<double> >& all
 
   for(i=0; i<rate.size(); i++)
   {
-    rate.at(i)=1.0/(np-absTotal.at(i))*abs.at(i)/dt;
+    rate.at(i)=1.0/(np-absTotal.at(i))*abs.at(i)/dt; //per Definition größer oder gleich Null!
     Paper2 << "rate.at(i) " << rate.at(i) << endl; 
+//     if(np==absTotal.at(i))
+//     {
+//     cout << "divergent, da n0=na" << endl;
+//     }
   }
 
 }
@@ -643,9 +695,9 @@ int prepareVda(const vector< vector<double> >& allVeloc, const vector<double>& v
   {
     getRow(velocVec, allVeloc, i);
     calcVDistribution(vDist,vDistNorm, velocVec, rangeBeg, rangeEnd, nBins);
-    DistTotal.at(j)=vDistNorm;
+    DistTotal.at(j)=vDist;
     //cout << DistTotal.at(0).size() << " " << DistTotal.size() << endl;
-//     writeToFile(vDistT, vDist, "vDist", headerLine, folderName); 
+     writeToFile(vDistT, vDist, "vDist", headerLine, folderName); 
 //     writeToFile(vDistT, vDistNorm, "vDistNorm", headerLine, folderName);  
     j++;
      //cout << j << endl;
@@ -666,9 +718,9 @@ int preparePda(const vector< vector<double> >& allx, const vector<double>& pDist
   {
     getRow(xVec, allx, i);
     calcVDistribution(pDist,pDistNorm, xVec, rangeBeg, rangeEnd, nBins);
-    DistTotal.at(j)=pDistNorm;
-    writeToFile(pDistT, pDist, "pDist", headerLine, folderName);
-    writeToFile(pDistT, pDistNorm, "pDistNorm", headerLine, folderName);
+    DistTotal.at(j)=pDist;
+     writeToFile(pDistT, pDist, "pDist", headerLine, folderName);
+//     writeToFile(pDistT, pDistNorm, "pDistNorm", headerLine, folderName);
     j++;
   }
   return 0;
@@ -832,35 +884,9 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 	
     
     
-    //-----------------------------Corr3----------------------------------
-//     fstream Gam,GamOm;
-//     Gam.open("Gam.dat", ios::out);
-//     GamOm.open("GamOm.dat", ios::out);
-//     double dom;
-//     double om=0.0;
-//     double tkernel=0.0;
-//     dom = M_PI/so.dt/(2.0*so.nFourier/2+1);
-//     vector<double> specOm(2.0*so.nFourier/2+1);
-//     vector<double> kernel(so.nSteps);
-//     
-//     for(int i=0; i<kernel.size(); i++)  //Kernel
-//     {
-// 	
-//       kernel.at(i)=1.0/4.0*so.alpha*so.alpha*(1-so.alpha/sqrt(so.mass)*tkernel)*exp(-so.alpha/sqrt(so.mass)*tkernel);
-//       Gam << tkernel << " " << kernel.at(i) << endl ;
-//       tkernel += so.dt; 
-//       
-//     }
-    
-//     for(int i=0; i<specOm.size(); i++)  //FourierTrafo des Kernels
-//     {
-// 	
-//       specOm.at(i)=pow(so.alpha,3.0)*pow(om,2.0)/(sqrt(so.mass)*pow(pow(om,2.0)+pow(so.alpha,2.0)/so.mass,2.0));
-//       GamOm << om << " " << specOm.at(i) << endl ;
-//       om += dom; 
-//       
-//     }
-	//!!!!!!!!!!!1Grenzwert der mittleren kinetische Energie  für masselose Theore (analytisch)!!!!!!!!!!!!!!!
+    //===================================Corr3============================================
+
+	//Grenzwert der mittleren kinetische Energie  für masselose Theorie (analytisch)
 	//
 	fstream Energy;
          Energy.open("kinEnergy.dat", ios::out);
@@ -870,18 +896,12 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 	 {
 	   Energy << results.tVec.at(i) << " " << 1.0/2.0*so.mass*v2 << endl;
 	 }
-	 ///
 	 
    //-----------------------------Corr3----------------------------------
 	 
 	 
-    //computations for P(kappa)
-    if(so.transition)
-    {
-    comp_kappa(ksim.kappa,results.v0Vec.at(1),so.mass,so.potB1,i);
-    }
 
-	//noise
+	//======================================noise=======================================================
 	//writeToFile(results.tVec, noiseDiss.allNoise.at(0), filenames.noise, headerString, foldernames.main);
 
 	//noise average
@@ -909,7 +929,7 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 // 	}
 // 	writeToFile(results.tVec, noiseAv, filenames.noiseAv, headerString, foldernames.main);
 
-	//correlation of colored noise
+	//========================================correlation of colored noise================================================
 	vector<double> corrAv(so.nSteps, 0.0);
 	vector<double> corrAvTotal(so.nSteps, 0.0);
 	//void buildCorrAv(vector<double>& vec, const vector< vector<double> >& allNoise, const int& startN, const int& endN)
@@ -929,7 +949,7 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 // 	writeToFile(results.tVec, results.allV.at(20), filenames.veloc, headerString, foldernames.main);
 	
 
-	//flux
+	//=======================================flux=========================================================
 	vector<double> flux(so.nSteps,0.0);
 	vector<double> fluxPositive(so.nSteps,0.0);
 	vector<double> fluxNegative(so.nSteps,0.0);
@@ -944,7 +964,7 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 //          E.open("fluxtotvorher.dat", ios::out | ios::app);
 //  	for(int i=0; i < fluxTotal.size(); i++)
 //  	{E << fluxTotal.at(i) << endl;}
-	calcFlux(flux,rightDistKramers,rightDist,so.dt);
+	calcFlux(flux,rightDistKramers,rightDist,so.dt,results.allX, so.xb,so.KramersRate);
         fluxLeftRight(fluxPositive,fluxNegative,so.xb,results.allX,so.dt);
 	KramersFluxPaper(fluxPaper, results.allX, so.dt, so.np, so.rxborder);
 	ksim.fluxAvVec.at(j)=flux;
@@ -1017,7 +1037,7 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 	//writeToFile(results.tVec,fluxNegative,filenames.fluxNegative,headerString,foldernames.main);
 	
 	
-	//-------------------------kramers----------------------
+	//=============================================kramers==========================================================
 	
 	  if(j==so.avNum-1)  //erst bei letztem Durchlauf ausgeben!
 	  {
@@ -1078,11 +1098,11 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 	    }
 	  }
 	
-	//------------------------------------------------------
+	//-============================================================================
 	
 	
 	
-	//kinetic energy
+	//============================================kinetic energy========================================
         vector<double> kinEnergyAv(so.nSteps, 0.0);
 	calcKinEnergyAv(kinEnergyAv, results.allV, so.mass);
 	ksim.kinEnergyAvVec.at(j)= kinEnergyAv;
@@ -1113,30 +1133,89 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 	//headerLine << "\n#<kinEnergy> after " << so.timeSettled << "s = " << kinEnergyAvAv << "\n#stdDeviation = " << kinEnergyStdDeviation;
 //         writeToFile(results.tVec, kinEnergyAv, filenames.kinEnergyAv, headerString, foldernames.main);
 
-	//velocity distribution
+	
+	
+	//=========================================energy distribution==================================================
+	if(so.avNum==1)
+	{
+	vector<double> eDistT(so.vDistNBins);
+	linspace(so.eDistRangeBeg + 0.5*(so.eDistRangeEnd-so.eDistRangeBeg)/so.eDistNBins,
+					  (so.eDistRangeEnd-so.eDistRangeBeg)/so.eDistNBins, eDistT);
+	vector<double> allKinEnDist(so.vDistNBins);
+	vector<double> allKinEnDist1(so.vDistNBins);
+	fstream EnergyDist,EnergyDist1;
+        EnergyDist.open("kinEnergyDist.dat", ios::out);
+	EnergyDist1.open("kinEnergyDist1.dat", ios::out);
+	vector< vector<double> >  allKinEn(so.np, vector<double>(so.nSteps, 0.0));
+	for(int a=0;a<so.np;a++)
+	{
+	 calcKinEnergy(allKinEn.at(a),results.allV.at(a),so.mass); 
+	}
+	for(int a=0; a<so.nSteps;a++)
+	{
+	 EnergyDist << a << " " << results.allV.at(0).at(a) << " " << 1.0/2.0*so.mass*results.allV.at(0).at(a)*results.allV.at(0).at(a) << " " << allKinEn.at(0).at(a) << endl;
+	 EnergyDist1 << a << " " << results.allV.at(3).at(a) << " " << 1.0/2.0*so.mass*results.allV.at(3).at(a)*results.allV.at(3).at(a) << " " << allKinEn.at(3).at(a) << endl;
+	}
+	EnergyDist.close();
+	EnergyDist1.close();
+	
+	calcvDistributionMean(allKinEnDist,allKinEnDist1, allKinEn, ceil((so.eDistStartTime-so.t0)/so.dt), so.nSteps, so.eDistRangeBeg, so.eDistRangeEnd, so.eDistNBins);
+	
+	if(so.edaBool==1)
+	{
+        writeToFile(eDistT, allKinEnDist, filenames.allKinEnDist, headerString, foldernames.main);
+	}
+	}
+	//=========================================velocity distribution================================================
         vector<double> vDistT(so.vDistNBins);
 	linspace(so.vDistRangeBeg + 0.5*(so.vDistRangeEnd-so.vDistRangeBeg)/so.vDistNBins,
 					  (so.vDistRangeEnd-so.vDistRangeBeg)/so.vDistNBins, vDistT);
 	vector<double> vDist(so.vDistNBins);
 	vector<double> vDist1(so.vDistNBins);
+	vector<double> velocInitDist(so.vDistNBins);
+	vector<double> velocInitDist1(so.vDistNBins);
+	calcVDistribution(velocInitDist,velocInitDist1, results.v0Vec, so.vDistRangeBeg, so.vDistRangeEnd, so.vDistNBins);
 	calcvDistributionMean(vDist,vDist1, results.allV, ceil((so.vDistStartTime-so.t0)/so.dt), so.nSteps, so.vDistRangeBeg, so.vDistRangeEnd, so.vDistNBins);
+	//vDist erst dann sinvoll, wenn System bereits equilibriert ist ,ceil((so.vDistStartTime-so.t0)/so.dt) ist Abschätzung für Schritt, ab dem System im Gleichgewicht ist!!
 	vector<double> vDistTheo(so.vDistNBins);
 	calcVDistTheo(vDistTheo, so.temperature, so.mass, so.k_b, so.vDistRangeBeg, so.vDistRangeEnd, so.vDistNBins);
-        //writeToFile(vDistT, vDist, filenames.vDist, headerString, foldernames.main);
-	//writeToFile(vDistT, vDist1, filenames.vDist1, headerString, foldernames.main);
-        //writeToFile(vDistT, vDistTheo, filenames.vDistTheo, headerString, foldernames.main);
-
-	//position distribution
+	if(so.vdaBool==1)
+	{
+        writeToFile(vDistT, vDist, filenames.vDist, headerString, foldernames.main);
+	writeToFile(vDistT, vDist1, filenames.vDist1, headerString, foldernames.main);
+	if(ksim.indexAvNum==0)
+	{
+	writeToFile(vDistT, vDistTheo, filenames.vDistTheo, headerString, foldernames.main);
+	writeToFile(vDistT, velocInitDist, filenames.velocInitDist, headerString, foldernames.main);
+	writeToFile(vDistT, velocInitDist1, filenames.velocInitDist1, headerString, foldernames.main);
+	}
+	}
+	
+	//======================================position distribution=======================================================
         vector<double> pDistT(so.pDistNBins);
 	linspace(so.pDistRangeBeg + 0.5*(so.pDistRangeEnd-so.pDistRangeBeg)/so.pDistNBins,
 					  (so.pDistRangeEnd-so.pDistRangeBeg)/so.pDistNBins, pDistT);
 	vector<double> pDist(so.pDistNBins);
 	vector<double> pDist1(so.pDistNBins);
+	vector<double> xInitDist(so.vDistNBins);
+	vector<double> xInitDist1(so.vDistNBins);
+	calcVDistribution(xInitDist,xInitDist1, results.x0Vec, so.pDistRangeBeg, so.pDistRangeEnd, so.pDistNBins);
 	calcvDistributionMean(pDist,pDist1, results.allX, ceil((so.pDistStartTime-so.t0)/so.dt), so.nSteps, so.pDistRangeBeg, so.pDistRangeEnd, so.pDistNBins);
-	//writeToFile(pDistT, pDist, filenames.pDist, headerString, foldernames.main);
-	//writeToFile(pDistT, pDist1, filenames.pDist1, headerString, foldernames.main);
+	vector<double> xDistTheo(so.vDistNBins);
+	calcXDistTheo(xDistTheo, so.temperature, so.mass, so.potw, so.k_b, so.vDistRangeBeg, so.vDistRangeEnd, so.pDistNBins);
+	if(so.pdaBool==1)
+	{
+	writeToFile(pDistT, pDist, filenames.pDist, headerString, foldernames.main);
+	writeToFile(pDistT, pDist1, filenames.pDist1, headerString, foldernames.main);
+	if(ksim.indexAvNum==0)
+	{
+	writeToFile(pDistT, xDistTheo, filenames.xDistTheo, headerString, foldernames.main);
+	writeToFile(pDistT, xInitDist, filenames.xInitDist, headerString, foldernames.main);
+	writeToFile(pDistT, xInitDist1, filenames.xInitDist1, headerString, foldernames.main);
+	}
+	}
 	
-	//averaged position
+	//===================================averaged position============================================================
 	vector<double> xAvTheo(so.nSteps,0.0);
 	vector<double> xAv(so.nSteps, 0.0);
 	vector<double> xAvTotal(so.nSteps,0.0);
@@ -1187,7 +1266,7 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 	//writeToFile(results.tVec, xSqr1, filenames.test1, headerString, foldernames.main);
 	//writeToFile(results.tVec, xSqr2, filenames.test2, headerString, foldernames.main);
 
-    //averaged velocity !! 
+    //=====================================averaged velocity !!============================================================== 
 	vector<double> velocAv(so.nSteps, 0.0);
 	vector<double> vSqrAv(so.nSteps, 0.0);
 	vector<double> velocAvTotal(so.nSteps,0.0);
@@ -1206,11 +1285,10 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 	
 	
 	
-	//potential related
-	
-	
+	//====================================potential related=======================================
 	
 	//gnuplot-file für potenzial
+	//============================
 	vector <double> xVec(10000,0.0);
 	vector <double> potVec(10000,0.0);
 	
@@ -1228,17 +1306,20 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 	if (so.potNr != 0)
 	{
 	  //potential energy
+	  //================
 	  vector<double> potEnergyAv(so.nSteps, 0.0);
 	  calcPotEnergyAv(potEnergyAv, results.allX, results.tVec, potential.potentialFunc);
 	  //writeToFile(results.tVec, potEnergyAv, filenames.potEnergyAv, headerString,foldernames.main);
 
 	  //total energy
+	  //============
 	  vector<double> totalEnergyAv(so.nSteps, 0.0);
 	  add2Vec(totalEnergyAv, potEnergyAv, kinEnergyAv);
 	  //writeToFile(results.tVec, totalEnergyAv, filenames.totalEnergyAv, headerString, foldernames.main, 7);
 	}
 
 	//given potential
+	//===============
 	vector<double> potentialRange(so.eaPotentialN, 0.0);
 	linspace(so.eaPotBorderL, (so.eaPotBorderR-so.eaPotBorderL)/so.eaPotentialN, potentialRange);
 	vector<double> potentialVec(so.eaPotentialN, 0.0);
@@ -1248,7 +1329,7 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 	}
 	//writeToFile(potentialRange, potentialVec, filenames.potential, headerString, foldernames.main);
 
-	//Theoretical curve of kinetic energy without potential
+	//===================Theoretical curve of kinetic energy without potential=====================================
 	if (2*so.D/so.mass/so.k_b/so.temperature*so.tau >= 1 && so.potNr == 0 && so.noiseNr == 2)
 	{
 	  vector<double> kinEnergyTheo(so.nSteps, 0.0);
@@ -1283,7 +1364,7 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 	}
 
 	//correlation of x when in equilibrium
-	vector<double> settledTVec((int) round((so.t1-so.t0-so.timeSettled)/so.dt),0.0);
+	vector<double> settledTVec((int) round((so.tEnd-so.t0-so.timeSettled)/so.dt),0.0);
 	linspace(0.0, so.dt, settledTVec);
 	vector<double> corrX(settledTVec.size(), 0.0);
 	vector<double> corrXTotal(settledTVec.size(), 0.0);
@@ -1310,7 +1391,7 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 	//writeToFile(specOmega, specXVec, filenames.specX, headerString, foldernames.main);
 
 	//correlation of v when in equilibrium
-	vector<double> corrV((int) round((so.t1-so.t0-so.timeSettled)/so.dt), 0.0);
+	vector<double> corrV((int) round((so.tEnd-so.t0-so.timeSettled)/so.dt), 0.0);
 	vector<double> corrVTotal(corrV.size(), 0.0);
 	buildCorrAv(corrV, results.allV, (int) round(so.timeSettled/so.dt), 0);
 	
@@ -1342,7 +1423,7 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 	  writeToFile(results.tVec, kinEnergyTheo, filenames.kinEnergyTheo, headerString, foldernames.main);
 	}
 
-	// ----energy animation----
+	//=====================================energy animation==========================================
 	if (so.eaBool)
 	{
 	  printf("Now creating files for energy animation...\n");
@@ -1357,7 +1438,7 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 	  }
 	}
 	
-	// ----velocity distribution animation----
+	// ===========================velocity distribution animation====================================
 	if (so.vdaBool)
 	{
 	 printf("Now creating files for velocity distribution animation...\n");
@@ -1366,9 +1447,9 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 	 prepareVda(results.allV, vDistT,ksim.vDistAvVec.at(j), so.vDistRangeBeg, so.vDistRangeEnd, so.vDistNBins, so.vdaStride, headerString, foldernames.vda);
 	if(j==so.avNum-1)
 	  {
-	  buildAverage3(vDistTotal,ksim.vDistAvVec);
-	  for(int k=0; k<vDistTotal.size();k++)
-	  {
+	  buildAverage3(vDistTotal,ksim.vDistAvVec); //hier wird über alle Verteilungen zu verschiedenen Zeitpunkten gemittelt,
+	  for(int k=0; k<vDistTotal.size();k++)	     //nur sinnvoll für Zeiten, in denen das System bereits equilibriert ist
+	  {					     //aktuell hat prepareVda() keine Aussagekraft
 	   writeToFile(vDistT, vDistTotal.at(k), "vDistTotalNorm", headerString, foldernames.vda); 
 	  }
 	  }

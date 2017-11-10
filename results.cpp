@@ -79,7 +79,7 @@ vector<double> Results::fillThermalizedPos(const SimulationOptions &so)
   gsl_rng_set (so.res_rng, so.seed);
   for (int i = 0; i < so.np; i++)
   {
-    output.at(i) = so.x0 + gsl_ran_gaussian(so.res_rng, sqrt(so.k_b*so.temperature/(so.mass*so.potw)));
+    output.at(i) = so.x0 + gsl_ran_gaussian(so.res_rng, sqrt(so.k_b*so.temperature/(so.mass*so.potw*so.potw)));
   }
   return output;
 }
@@ -106,8 +106,8 @@ KappaSimulation::KappaSimulation(const SimulationOptions &so){
 	this->CorrAvVec.resize(so.avNum,vector<double>(so.nSteps, 0.0));
 	this->noiseAvVec.resize(so.avNum,vector<double>(so.nSteps, 0.0));
 	this->noiseSqrAvVec.resize(so.avNum,vector<double>(so.nSteps, 0.0));
-	this->corrXAv.resize(so.avNum,vector<double>((int) round((so.t1-so.t0-so.timeSettled)/so.dt), 0.0));
-	this->corrVAv.resize(so.avNum,vector<double>((int) round((so.t1-so.t0-so.timeSettled)/so.dt), 0.0));
+	this->corrXAv.resize(so.avNum,vector<double>((int) round((so.tEnd-so.t0-so.timeSettled)/so.dt), 0.0));
+	this->corrVAv.resize(so.avNum,vector<double>((int) round((so.tEnd-so.t0-so.timeSettled)/so.dt), 0.0));
 
 
 

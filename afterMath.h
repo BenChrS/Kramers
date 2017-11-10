@@ -44,6 +44,9 @@ void calcvDistributionMean(vector<double>& vec,vector<double>& vec1, const vecto
 // returns the Maxwell Boltzmann probability density distribution for one dimension v in the range [rangeBeg, rangeEnd]
 void calcVDistTheo(vector<double>& vec, const double& temperature, const double& mass, const double& k, const double& rangeBeg, const double& rangeEnd, const int& nBins);
 
+// returns the Maxwell Boltzmann probability density distribution for one dimension x in the range [rangeBeg, rangeEnd]
+void calcXDistTheo(vector<double>& vec, const double& temperature, const double& mass,const double& omega, const double& k, const double& rangeBeg, const double& rangeEnd, const int& nBins);
+
 // computes the average position of the particles, note: already implemented by buildaverage in vectorCalculations
 void calcxAv(vector<double>& vec,const vector< vector<double> >& data);
 
@@ -80,7 +83,7 @@ void countLeft(vector<double>& vec,const vector< vector<double> >& data, const d
 // makes statistic of how many particles are on the right of border over all times
 void countRight(vector<double>& vec,vector<double>& vec1, vector<double>& vec2, vector<double>& vec3, const vector< vector<double> >& data, const double& border,const double& Kborder,const bool& Kramers,const int& k,const double& dt);
 
-void calcFlux(vector<double>& vec,const vector<double>& vec1,const vector<double>& rightDist,const double& dt);
+void calcFlux(vector<double>& vec,const vector<double>& vec1,const vector<double>& rightDist,const double& dt,const vector< vector<double> >& data, const double& border,const bool& Kramers);
 
 //counts number of the particles crossing the potential well for every time step
 void fluxLeftRight(vector <double>& vec,vector <double>& vec1,const double border,const vector< vector<double> >& data,const double& dt);
@@ -89,7 +92,7 @@ void fluxLeftRight(vector <double>& vec,vector <double>& vec1,const double borde
 void averageFluxLeftRight(vector<double>& vec, double& averageRate,double& variance);
 
 //KramersRate wie in Paper berechnet, backscattering von jenseits der Border noch nicht berücksichtigt
-void KramersFluxPaper(vector<double>& rate, const vector < vector<double> >& allX, const double& dt, const int& np, const double& border);
+void KramersFluxPaper(vector<double>& rate, const vector < vector<double> >& allX, const double& dt, const int& np, const double& Kborder);
 
 // returns the averaged potential energy over all times
 void calcPotEnergyAv(vector<double>& vec, const vector< vector<double> >& allX, const vector<double>& tVec, function<double(double, double)> potentialFunc);

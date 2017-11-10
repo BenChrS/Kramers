@@ -33,7 +33,7 @@ public:
 	double cColoured;
 	//statistical/program settings
 	double t0; //time interval [t0, t1]
-	double t1;
+	double tEnd;
 	double tSettling; // time needed for I(t) to be approximately 0
 	double timeSettled; //approximate time particles need to be in equilibrium - only important for kinetic Energy Average - not yet in external call
 	int nStepsFactor;
@@ -135,6 +135,14 @@ public:
 	double pDistRangeEnd;
 	int pDistNBins;
 	double pDistStartTime;
+	
+	//kinEnergy distribution animation (eda) settings
+	bool edaBool; 
+	int edaStride;
+	double eDistRangeBeg;
+	double eDistRangeEnd;
+	int eDistNBins;
+	double eDistStartTime;
 	
 	//transition options
         bool transition;

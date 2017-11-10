@@ -108,7 +108,7 @@ vector<double> generateCorrFunc3(const double& t0, const double& dt, const int& 
   double t = t0;
   for (int i = 0; i < nSteps; i++)
   {
-    output.at(i) = 2.0*k*temperature/4.0*pow(alpha,2.0)*(1-alpha/sqrt(mass)*t)*exp(-alpha/sqrt(mass)*t);
+    output.at(i) = k*temperature/4.0*pow(alpha,2.0)*(1-alpha/sqrt(mass)*t)*exp(-alpha/sqrt(mass)*t);
     t += dt;
   }
   return output;
@@ -152,7 +152,7 @@ vector<double> generateDissipationKernel(const int& nMax, const vector<double>& 
 	output.at(i) = 0.5/(k*temperature)*corrFunction.at(i);
 	i++;
       }
-      while (i <maxN && output.at(i-1)>=-0.3); //  muss an Minimum von Gamma angepasst werden
+      while (i <maxN && output.at(i-1)>=-0.001); //  muss an Minimum von Gamma angepasst werden \0.15 für \alpha=30
       do
       {
 	output.at(i) = 0.5/(k*temperature)*corrFunction.at(i);
@@ -322,9 +322,9 @@ NoiseDiss::NoiseDiss(SimulationOptions& so){
     
      for(int i=0; i<specOm.size(); i++)  //FourierTrafo des Kernels
     {
-      specOm.at(i)=so.D/(1.0+so.tau*so.tau*om*om);  //FourierTrafo von Corr0
+      //specOm.at(i)=so.D/(1.0+so.tau*so.tau*om*om);  //FourierTrafo von Corr0
       //specOm.at(i)=so.D*exp(-(so.a*om/2.0)*(so.a*om/2.0));   //FourierTrafo von Corr1
-      //specOm.at(i)=2.0*so.k_b*so.temperature*pow(so.alpha,3.0)*pow(om,2.0)/(sqrt(so.mass)*pow(pow(om,2.0)+pow(so.alpha,2.0)/so.mass,2.0));
+      specOm.at(i)=2.0*so.k_b*so.temperature*pow(so.alpha,3.0)*pow(om,2.0)/(sqrt(so.mass)*pow(pow(om,2.0)+pow(so.alpha,2.0)/so.mass,2.0));
       GamOm << om << " " << specOm.at(i) << endl ;
       om += dom; 
       

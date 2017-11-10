@@ -175,10 +175,11 @@ string fileNameLong = "";
                 <<"a"<<" = "<<so.a<<endl
                 <<"chi"<<" = "<<so.chi<<endl
                 <<"alpha"<<" = " << so.alpha << endl
+                <<"minalpha" << " = " << so.minAlpha << endl
                 <<endl
                 <<"statistical/program settings:"<<endl
                 <<"t0"<<" = "<<so.t0<<endl
-                <<"t1"<<" = "<<so.t1<<endl
+                <<"t1"<<" = "<<so.tEnd<<endl
                 <<"tSettling"<<" = "<<so.tSettling<<endl
                 <<"timeSettled"<<" = "<<so.timeSettled <<endl
                 <<"nStepsFactor"<<" = "<<so.nStepsFactor <<endl
@@ -269,6 +270,112 @@ string fileNameLong = "";
                 <<"vDistNBins"<<" = "<<so.vDistNBins<<endl
                 <<"vDistStartTime"<<" = "<<so.vDistStartTime<<endl
                 <<endl
+                <<"kinEn distribution animation(eda):"<<endl
+                <<"edaBool"<<" = "<<so.edaBool<<endl
+                <<"edaStride"<<" = "<<so.edaStride<<endl
+                <<"eDistRangeBeg"<<" = "<<so.eDistRangeBeg<<endl
+                <<"eDistRangeEnd"<<" = "<<so.eDistRangeEnd<<endl
+                <<"eDistNBins"<<" = "<<so.eDistNBins<<endl
+                <<"eDistStartTime"<<" = "<<so.eDistStartTime<<endl
+                <<endl
+                <<"dt"<<" = "<<so.dt<<endl
+                <<"gamma"<<" = "<<so.gamma<<endl
+                <<"nSettling"<<" = "<<so.nSettling<<endl
+                <<"nFourier"<<" = "<<so.nFourier<<endl;
+
+    }
+}
+
+int writeInitValToFile1(const SimulationOptions& so,const string &fileName, const string &folderName,const bool &checkExistence, const string &fileExtension)
+{
+string fileNameLong = "";
+  if (folderName != "")
+  {
+      fileNameLong.append(folderName);
+      fileNameLong.append("/");
+  }
+  fileNameLong.append(fileName);
+  if (checkExistence)
+  {
+    fileNameLong = existingFile(fileNameLong, fileExtension);
+  }
+  fileNameLong.append(fileExtension);
+  if (boost::filesystem::exists(fileNameLong))
+  {
+   printf("%s already exists. Creating new.\n", fileNameLong.c_str());
+  }
+    ofstream myfile1 (fileNameLong.c_str());
+    if (myfile1.is_open())
+    {
+    myfile1      <<"physical settings:"<<endl
+                <<"k_b"<<" = "<<so.k_b<<endl
+                <<"mass"<<" = "<<so.mass<<endl
+                <<"temperature"<<" = "<<so.temperature<<endl
+                <<"D"<<" = "<<so.D<<endl
+                <<"tau"<<" = "<<so.tau<<endl
+                <<"a"<<" = "<<so.a<<endl
+                <<"alpha"<<" = " << so.alpha << endl
+                <<endl
+                <<"statistical/program settings:"<<endl
+                <<"t0"<<" = "<<so.t0<<endl
+                <<"t1"<<" = "<<so.tEnd<<endl
+                <<"tSettling"<<" = "<<so.tSettling<<endl
+                <<"timeSettled"<<" = "<<so.timeSettled <<endl
+                <<"nStepsFactor"<<" = "<<so.nStepsFactor <<endl
+                <<"nStepsTwo"<<" = "<<so.nStepsTwo <<endl
+                <<"nSteps"<<" = "<< so.nSteps<<endl
+                <<"npTen"<<" = "<< so.npTen<<endl
+                <<"npTwo"<<" = "<<so.npTwo <<endl
+                <<"np"<<" = "<<so.np <<endl
+		<<"avOpt"<<" = "<<so.avOpt<<endl
+		<<"avNum"<<" = "<<so.avNum<<endl
+                <<endl
+                <<"corrFuncNr"<<" = "<<so.corrFuncNr<<endl
+                <<"potNr"<<" = "<<so.potNr<<endl
+                <<"noiseNr"<<" = "<<so.noiseNr<<endl
+                <<"sdeSolverNr"<<" = "<<so.sdeSolverNr<<endl
+                <<"Kramers"<<" = "<<so.Kramers<<endl
+                <<"initCondNr"<<" = "<<so.initCondNr<<endl
+                <<endl
+                <<"potential settings:"<<endl
+                <<"potw " << "= " << so.potw << endl
+                <<"xc" <<" = " << so.xc << endl
+                <<"xb" <<" = " << so.xb << endl
+                <<"Ub" <<" = " << so.Ub << endl
+                <<endl
+                <<"Initial conditions:"<<endl
+                <<"x0"<<" = "<<so.x0<<endl
+                <<"v0"<<" = "<<so.v0<<endl
+                <<"aWhite"<<" = "<<so.aWhite<<endl
+                <<"aColoured"<<" = "<<so.aColoured<<endl
+                <<"rxborder"<<" = "<<so.rxborder<<endl
+                <<"lxborder"<<" = "<<so.lxborder<<endl
+                <<endl
+                <<"Position distribution animation(pda):"<<endl
+                <<"fps"<<" = "<<so.fps<<endl
+                <<"pdaBool"<<" = "<<so.pdaBool<<endl
+                <<"pdaStride"<<" = "<<so.pdaStride<<endl
+                <<"pDistRangeBeg"<<" = "<<so.pDistRangeBeg<<endl
+                <<"pDistRangeEnd"<<" = "<<so.pDistRangeEnd<<endl
+                <<"pDistNBins"<<" = "<<so.pDistNBins<<endl
+                <<"pDistStartTime"<<" = "<<so.pDistStartTime<<endl
+                <<endl
+                <<"Velocity distribution animation(pda):"<<endl
+                <<"vdaBool"<<" = "<<so.vdaBool<<endl
+                <<"vdaStride"<<" = "<<so.vdaStride<<endl
+                <<"vDistRangeBeg"<<" = "<<so.vDistRangeBeg<<endl
+                <<"vDistRangeEnd"<<" = "<<so.vDistRangeEnd<<endl
+                <<"vDistNBins"<<" = "<<so.vDistNBins<<endl
+                <<"vDistStartTime"<<" = "<<so.vDistStartTime<<endl
+                <<endl
+                <<"kinEn distribution animation(eda):"<<endl
+                <<"edaBool"<<" = "<<so.edaBool<<endl
+                <<"edaStride"<<" = "<<so.edaStride<<endl
+                <<"eDistRangeBeg"<<" = "<<so.eDistRangeBeg<<endl
+                <<"eDistRangeEnd"<<" = "<<so.eDistRangeEnd<<endl
+                <<"eDistNBins"<<" = "<<so.eDistNBins<<endl
+                <<"eDistStartTime"<<" = "<<so.eDistStartTime<<endl
+                <<endl
                 <<"dt"<<" = "<<so.dt<<endl
                 <<"gamma"<<" = "<<so.gamma<<endl
                 <<"nSettling"<<" = "<<so.nSettling<<endl
@@ -319,6 +426,8 @@ Filenames::Filenames(){
 	this->whiteNoise = "whitNoise";
 	this->pDist = "pDist";
 	this->pDist1 = "pDist1";
+	this->xDistTheo = "xDistTheo";
+	this->allKinEnDist = "allKinEnDist";
 	this->x = "x";
 	this->xAv = "xAv";
 	this->xAvTheo = "xAvTheo";
@@ -338,10 +447,15 @@ Filenames::Filenames(){
 	this->test1 = " test1";
 	this->test2 = " test2";
 	this->SimOpt= "SimOpt";
+	this->SimOpt1= "SimOpt1";
 	this->corrAvTotal="corrAvTotal";
 	this->noiseAvTotal="noiseAvTotal";
 	this->corrXTotal="corrXTotal";
 	this->corrVTotal="corrVTotal";
+	this->velocInitDist="velocInitDist";
+	this->xInitDist="xInitDist";
+	this->velocInitDist1="velocInitDist1";
+	this->xInitDist1="xInitDist1";
 
 }
 

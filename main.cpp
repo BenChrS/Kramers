@@ -102,6 +102,7 @@ int main(int argc, char** argv) {  //argc: 1, argv[0]: ./colnoise
 	Potential potential(so); //potential and force
         SdeSolver sdeSolver(so, noiseDiss);
 	writeInitValToFile(so,filenames.SimOpt,foldernames.main); //initial values
+	writeInitValToFile1(so,filenames.SimOpt1,foldernames.main); //initial values (reduced form)
 
 	printStatus(results, noiseDiss, so);
 
