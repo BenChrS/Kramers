@@ -169,7 +169,7 @@ void SimulationOptions::setInitValues(){
 	//this->t1 =1.0; //1.0*this->xc; 
 	this->xb=1.6*this->xc;
 	//this->Ub=2.5;   // units of wc   //2.5*this->k_b*this->temperature;
-	this->mass =0.1;//4.0*this->Ub/(this->potw*this->potw*pow(0.6*this->xc,2.0));
+	this->mass =4.0*this->Ub/(this->potw*this->potw*pow(0.6*this->xc,2.0));
 	this->potK = pow(this->potw,2.0)*this->mass; //for potential1
 	this->alpha=30.0*sqrt(this->mass); // correlation time for massless theory // Einheit Masse/Zeit alpha=sqrt(mass)*alpha' 
 			//alpha=sqrt(mass) für alpha'=1 , alpha' ist inverse Korrelationszeit
