@@ -28,7 +28,7 @@ using namespace std::tr1::placeholders;
 	
 // Adams-Bashforth scheme for white noise
 //solves the Langevin equation with white noise and friction coefficient gamma
-int adamsBWhiteNoise(const vector<double>& tVec, const double& dt, const double& x0, const double& v0, const double& mass,
+int adamsBWhiteNoise(const vector<double>& tVec, const double& dt, const double& x0, const double& v0, const double& mass,const double& potw,
 		     const double& k_b, const double& temperature,const vector<double>& whiteNoise, const double gamma, 
 		     const double D,vector<double>& xVec, vector<double>& velocVec,function<double(const double&, const double&)> forceExtFunc,
 		     const bool& KramersRate,const double rxborder,const double lxborder,gsl_rng* res_rng,gsl_rng* noise_rng,const int& initCond,
@@ -102,6 +102,14 @@ int adamsBWhiteNoise(const vector<double>& tVec, const double& dt, const double&
 			// könnte problematisch sein ?!
                          //cout << velocVec.at(step) << endl ;
                        }break;
+
+                case 3:
+                       {
+                        xVec.at(step) = gsl_ran_gaussian(res_rng, sqrt(k_b*temperature/(mass*potw*potw)));//random initial velocity;
+                        velocVec.at(step) = gsl_ran_gaussian(res_rng, sqrt(k_b*temperature/mass));//random initial velocity;
+                       }break;
+
+
                 }
 
               //fstream Noise1;
@@ -510,7 +518,7 @@ int eulerCromerColNoise(const vector<double>& tVec, const double& dt, const doub
 // energy is not perfectly conserved
 // if absolute position of particle becomes larger than xCutoff, all following positions will be set to the same value
 // set xCutoff to negative value for turning that feature off
-int adamsBColNoise(const vector<double>& tVec, const double& dt, const double& x0, const double& v0, const double& mass,
+int adamsBColNoise(const vector<double>& tVec, const double& dt, const double& x0, const double& v0, const double& mass,const double& potw,
 		     const double& k_b, const double& temperature,const vector<double>& colNoise, const vector<double>& dissipationKernel,
 		     vector<double>& xVec, vector<double>& velocVec,function<double(const double&, const double&)> forceExtFunc, 
 		     const double& xCutoff,const bool& KramersRate, const double& rxborder, const double lxborder,gsl_rng* res_rng,gsl_rng* noise_rng,
@@ -593,6 +601,13 @@ int adamsBColNoise(const vector<double>& tVec, const double& dt, const double& x
             velocVec.at(step) = gsl_ran_gaussian(res_rng, sqrt(k_b*temperature/mass));//random initial velocity
             //cout << velocVec.at(step) << endl ;
            }break;
+					case 3:
+           {
+            xVec.at(step) = gsl_ran_gaussian(res_rng, sqrt(k_b*temperature/(mass*potw*potw)));//random initial velocity;
+            velocVec.at(step) = gsl_ran_gaussian(res_rng, sqrt(k_b*temperature/mass));//random initial velocity;
+           }break;
+
+
          }
 
          //noise
@@ -688,10 +703,10 @@ int adamsBColNoise(const vector<double>& tVec, const double& dt, const double& x
 SdeSolver::SdeSolver(const SimulationOptions& so, const NoiseDiss& noiseDiss){
 	  switch(so.sdeSolverNr)
 	  {
-		case 0: this->sdeSolverFunc = bind(adamsBWhiteNoise, _1, so.dt, _2, _3, _4,so.k_b,so.temperature, _5, so.gamma, so.D, _6, _7, _8,so.KramersRate,so.rxborder,so.lxborder,so.res_rng,noiseDiss.randGen.at(omp_get_thread_num()),so.initCondNr,noiseDiss); break;
+		case 0: this->sdeSolverFunc = bind(adamsBWhiteNoise, _1, so.dt, _2, _3, _4,so.potw,so.k_b,so.temperature, _5, so.gamma, so.D, _6, _7, _8,so.KramersRate,so.rxborder,so.lxborder,so.res_rng,noiseDiss.randGen.at(omp_get_thread_num()),so.initCondNr,noiseDiss); break;
         case 1: this->sdeSolverFunc = bind(eulerColNoise, _1, so.dt, _2, _3, _4, so.k_b,so.temperature,_5, noiseDiss.dispKernel, _6, _7, _8,so.KramersRate,so.rxborder,so.lxborder,so.res_rng,noiseDiss.randGen.at(omp_get_thread_num()),so.initCondNr,noiseDiss); break;
         case 2: this->sdeSolverFunc = bind(eulerCromerColNoise, _1, so.dt, _2, _3, _4, so.k_b,so.temperature, _5, noiseDiss.dispKernel, _6, _7, _8,so.KramersRate,so.rxborder,so.lxborder,so.res_rng,noiseDiss.randGen.at(omp_get_thread_num()),so.initCondNr,noiseDiss); break;
-        case 3: this->sdeSolverFunc = bind(adamsBColNoise, _1, so.dt, _2, _3, _4, so.k_b,so.temperature, _5, noiseDiss.dispKernel, _6, _7, _8, so.xCutoff,so.KramersRate,so.rxborder,so.lxborder,so.res_rng,noiseDiss.randGen.at(omp_get_thread_num()),so.initCondNr,noiseDiss); break;
+        case 3: this->sdeSolverFunc = bind(adamsBColNoise, _1, so.dt, _2, _3, _4,so.potw, so.k_b,so.temperature, _5, noiseDiss.dispKernel, _6, _7, _8, so.xCutoff,so.KramersRate,so.rxborder,so.lxborder,so.res_rng,noiseDiss.randGen.at(omp_get_thread_num()),so.initCondNr,noiseDiss); break;
 		case 4: this->sdeSolverFunc = bind(eulerWhiteNoise, _1, so.dt, _2, _3, _4,so.k_b,so.temperature, _5, so.gamma, so.D, _6, _7, _8,so.KramersRate,so.rxborder,so.lxborder,so.res_rng,noiseDiss.randGen.at(omp_get_thread_num()),so.initCondNr,noiseDiss); break;
 		default: printf("sdeSolverNr unknown\n");
 		//todo ErrorMessage

@@ -23,7 +23,7 @@ using namespace std::tr1;
 
 // Adams-Bashforth scheme for white noise
 //solves the Langevin equation with white noise and friction coefficient gamma
-int adamsBWhiteNoise(const vector<double>& tVec, const double& dt, const double& x0, const double& v0, const double& mass,
+int adamsBWhiteNoise(const vector<double>& tVec, const double& dt, const double& x0, const double& v0, const double& mass,const double& potw,
 		     const double& k_b, const double& temperature,const vector<double>& whiteNoise, const double gamma, 
 		     const double D,vector<double>& xVec, vector<double>& velocVec,function<double(const double&, const double&)> forceExtFunc,
 		     const bool& KramersRate,const double rxborder,const double lxborder,gsl_rng* res_rng,gsl_rng* noise_rng,const int& initCond,
@@ -67,7 +67,7 @@ int eulerCromerColNoise(const vector<double>& tVec, const double& dt, const doub
 // energy is not perfectly conserved
 // if absolute position of particle becomes larger than xCutoff, all following positions will be set to the same value
 // set xCutoff to negative value for turning that feature off
-int adamsBColNoise(const vector<double>& tVec, const double& dt, const double& x0, const double& v0, const double& mass,
+int adamsBColNoise(const vector<double>& tVec, const double& dt, const double& x0, const double& v0, const double& mass,const double& potw,
 		     const double& k_b, const double& temperature,const vector<double>& colNoise, const vector<double>& dissipationKernel,
 		     vector<double>& xVec, vector<double>& velocVec,
 		     function<double(const double&, const double&)> forceExtFunc, const double& xCutoff, 
