@@ -203,8 +203,8 @@ void calcG(const double& dt, const vector<double>& corrFunc,const int& corrFuncN
    vector<double> Mei(doubleCorrFunc.size()/2);
    linspace(0.0, dw, specOmega);
    linspace(0.0, dt, time);
-       fstream A,B;
-      A.open("fourier.dat", ios::out);
+//        fstream A,B;
+//       A.open("fourier.dat", ios::out);
 //       B.open("Mei.dat", ios::out);
   // in-place halfcomplex fourier transform
   gsl_fft_real_radix2_transform (G_array, 1, 2*steps);
@@ -214,7 +214,7 @@ void calcG(const double& dt, const vector<double>& corrFunc,const int& corrFuncN
   for (int i = 0; i < steps+1; i++)
   {
      G_array[i] = G_array[i]*dt;
-     A << specOmega.at(i) << " " << G_array[i] << endl;
+//      A << specOmega.at(i) << " " << G_array[i] << endl;
      G_array[i] = sqrt(fabs(G_array[i]));
   }
   // set imaginary part to 0, since the correlation function is symmetric with respect to the midpoint
@@ -301,34 +301,34 @@ NoiseDiss::NoiseDiss(SimulationOptions& so){
 
 	  
 	  
-    fstream Gam,GamOm;
-    Gam.open("Gam.dat", ios::out);
-    GamOm.open("GamOm.dat", ios::out);
-    double dom;
-    double om=0.0;
-    double tkernel=0.0;
-    dom = M_PI/so.dt/(2.0*so.nFourier/2+1);
-    vector<double> specOm(2.0*so.nFourier/2+1);
-    vector<double> kernel(so.nSteps);
-    
-    for(int i=0; i<kernel.size(); i++)  //Kernel
-    {
-	
-      kernel.at(i)=1.0/4.0*so.alpha*so.alpha*(1-so.alpha/sqrt(so.mass)*tkernel)*exp(-so.alpha/sqrt(so.mass)*tkernel);
-      Gam << tkernel << " " << kernel.at(i) << endl ;
-      tkernel += so.dt; 
-      
-    }
-    
-     for(int i=0; i<specOm.size(); i++)  //FourierTrafo des Kernels
-    {
-      //specOm.at(i)=so.D/(1.0+so.tau*so.tau*om*om);  //FourierTrafo von Corr0
-      //specOm.at(i)=so.D*exp(-(so.a*om/2.0)*(so.a*om/2.0));   //FourierTrafo von Corr1
-      specOm.at(i)=2.0*so.k_b*so.temperature*pow(so.alpha,3.0)*pow(om,2.0)/(sqrt(so.mass)*pow(pow(om,2.0)+pow(so.alpha,2.0)/so.mass,2.0));
-      GamOm << om << " " << specOm.at(i) << endl ;
-      om += dom; 
-      
-    }
+//     fstream Gam,GamOm;
+//     Gam.open("Gam.dat", ios::out);
+//     GamOm.open("GamOm.dat", ios::out);
+//     double dom;
+//     double om=0.0;
+//     double tkernel=0.0;
+//     dom = M_PI/so.dt/(2.0*so.nFourier/2+1);
+//     vector<double> specOm(2.0*so.nFourier/2+1);
+//     vector<double> kernel(so.nSteps);
+//     
+//     for(int i=0; i<kernel.size(); i++)  //Kernel
+//     {
+// 	
+//       kernel.at(i)=1.0/4.0*so.alpha*so.alpha*(1-so.alpha/sqrt(so.mass)*tkernel)*exp(-so.alpha/sqrt(so.mass)*tkernel);
+//       Gam << tkernel << " " << kernel.at(i) << endl ;
+//       tkernel += so.dt; 
+//       
+//     }
+//     
+//      for(int i=0; i<specOm.size(); i++)  //FourierTrafo des Kernels
+//     {
+//       //specOm.at(i)=so.D/(1.0+so.tau*so.tau*om*om);  //FourierTrafo von Corr0
+//       //specOm.at(i)=so.D*exp(-(so.a*om/2.0)*(so.a*om/2.0));   //FourierTrafo von Corr1
+//       specOm.at(i)=2.0*so.k_b*so.temperature*pow(so.alpha,3.0)*pow(om,2.0)/(sqrt(so.mass)*pow(pow(om,2.0)+pow(so.alpha,2.0)/so.mass,2.0));
+//       GamOm << om << " " << specOm.at(i) << endl ;
+//       om += dom; 
+//       
+//     }
 	  // ----prepare simulation functions and dependent variables----
 	  this->tFourierVec.resize(so.nFourier, 0.0);  // all times for nFourier steps       
 

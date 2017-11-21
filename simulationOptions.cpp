@@ -27,6 +27,7 @@ void SimulationOptions::setInitValues(){
 	string temp_string;
 	// read from file:
 	ifstream input;
+// 	input.open( inputfile.c_str() );
 	input.open("input.txt");
 		getline(input,temp_string);
 		stringstream(temp_string) >> this->tEnd;

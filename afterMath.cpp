@@ -507,16 +507,16 @@ void averageFluxLeftRight(vector<double>& vec, double& averageRate,double& varia
   {
     variance +=  pow(vec.at(i)-averageRate,2.0);
   }
-  variance=1.0/(averageRate*sqrt(k))*sqrt(1.0/(k-1)*variance);
+  variance=sqrt(1.0/(k-1)*variance);
 }
 
 //KramersRate wie in Paper berechnet
 void KramersFluxPaper(vector<double>& rate, const vector < vector<double> >& allX, const double& dt, const int& np, const double& Kborder)
 {
   
-  fstream Paper1,Paper2;
-  Paper1.open("ParticlesPaper.dat",ios::out);
-  Paper2.open("fluxPaper.dat",ios::out);
+//   fstream Paper1,Paper2;
+//   Paper1.open("ParticlesPaper.dat",ios::out);
+//   Paper2.open("fluxPaper.dat",ios::out);
   
   int i;  //Zeiten
   int j;	//Teilchen
@@ -542,7 +542,7 @@ void KramersFluxPaper(vector<double>& rate, const vector < vector<double> >& all
 	
       }
     }
-    Paper1 << "absPraticles " << absParticles << " absParticlesTotal " << absParticlesTotal << endl;
+//     Paper1 << "absPraticles " << absParticles << " absParticlesTotal " << absParticlesTotal << endl;
     abs.at(i)=absParticles;
     absTotal.at(i)=absParticlesTotal;
     absParticles=0;
@@ -551,7 +551,7 @@ void KramersFluxPaper(vector<double>& rate, const vector < vector<double> >& all
   for(i=0; i<rate.size(); i++)
   {
     rate.at(i)=1.0/(np-absTotal.at(i))*abs.at(i)/dt; //per Definition größer oder gleich Null!
-    Paper2 << "rate.at(i) " << rate.at(i) << endl; 
+    /*Paper2 << "rate.at(i) " << rate.at(i) << endl;*/ 
 //     if(np==absTotal.at(i))
 //     {
 //     cout << "divergent, da n0=na" << endl;
@@ -888,14 +888,14 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 
 	//Grenzwert der mittleren kinetische Energie  für masselose Theorie (analytisch)
 	//
-	fstream Energy;
-         Energy.open("kinEnergy.dat", ios::out);
+// 	fstream Energy;
+//          Energy.open("kinEnergy.dat", ios::out);
          double v2;
          v2=4.0/9.0*so.temperature/so.mass+4.0/9.0*pow(so.v0,2.0);
-         for (int i=0; i<results.tVec.size();i++)
-	 {
-	   Energy << results.tVec.at(i) << " " << 1.0/2.0*so.mass*v2 << endl;
-	 }
+//          for (int i=0; i<results.tVec.size();i++)
+// 	 {
+// 	   Energy << results.tVec.at(i) << " " << 1.0/2.0*so.mass*v2 << endl;
+// 	 }
 	 
    //-----------------------------Corr3----------------------------------
 	 
@@ -1043,6 +1043,8 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 	  {
 	    double kramersTheo;
 	    double kramersTheo1;
+	    double ratio;
+	    double kramersLowFric;
 	    double a;
 	    double gammaFre;
 	    double omegaB=sqrt(4*so.Ub/(so.mass*pow((so.xb-so.xc),2.0)));
@@ -1070,17 +1072,22 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 	      
 	      
 	      kramersTheo = omegaC*so.aWhite/(2.0*M_PI*omegaB)*exp(-so.Ub/(so.k_b*so.temperature));
-	      //kramersTheo = (sqrt(pow(gammaFre,2.0)/4.0+pow(omegaB,2.0))-gammaFre/2.0)/omegaB*omegaC/(2.0*M_PI)*exp(-so.Ub/(so.k_b*so.temperature));
-	      //kramersTheo1 = a*exp(-so.Ub/(so.k_b*so.temperature))*sqrt(so.Ub/so.mass)*1/so.xc;
+	      kramersLowFric=so.gamma/so.mass*so.Ub/so.temperature*exp(-so.Ub/(so.k_b*so.temperature));
 	      cout << "Ub " << so.Ub << endl;
 	      cout << "dt " << so.dt << endl;
 	      cout << "beta*Ib " << so.gamma/so.mass*2*M_PI*so.Ub/so.potw << endl;
 	      cout << "kramersTheo " << kramersTheo  << endl;
 	      cout << "kramersNumAv " << averageKramers << " Varianz " << variance <<  endl;
-	      cout << "kramersTheoWeakFric " << so.gamma/so.mass*so.Ub/so.temperature*exp(-so.Ub/(so.k_b*so.temperature)) << endl;
+	      cout << "kramersTheoWeakFric " << kramersLowFric << endl;
 	      if(so.gamma/so.mass*2*M_PI*so.Ub/so.potw<so.temperature)
 	      {
+		ratio=averageKramers/kramersLowFric;
+		cout << "ratio " <<  averageKramers/kramersLowFric << endl;
 		cout << "low friction" << endl;
+	      }
+	      else{
+		ratio=averageKramers/kramersTheo;
+		cout << "ratio " <<  averageKramers/kramersTheo << endl;
 	      }
 	    }
 	    else if(so.noiseNr==2)
@@ -1091,11 +1098,41 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 	      kramersTheo =omegaC*so.aColoured/(2.0*M_PI*omegaB)*exp(-so.Ub/(so.k_b*so.temperature));
 	      cout << "kramersTheo " << kramersTheo << endl;
 	      cout << "kramersNumAv " << averageKramers << " Varianz " << variance <<  endl;
+	      ratio=averageKramers/kramersTheo;
+	      cout << "ratio " << ratio << endl;
 	    }
 	    else
 	    {
 		cout << "Weder farbiges noch weißes Rauschen! " << endl;   
 	    }
+	  if(so.noiseNr==1)
+	  {
+	   fstream outputKramersMarkov;
+	   outputKramersMarkov.open("outputKramersMarkov.dat", ios::out | ios::app);
+	   outputKramersMarkov << so.gamma/so.mass << " " <<  averageKramers << " " << variance << " " << ratio << endl;
+	   outputKramersMarkov.close();
+	  }
+	  else
+	  {
+	    fstream outputKramersColor;
+	    outputKramersColor.open("outputKramersColor.dat", ios::out | ios::app);
+	    if(so.corrFuncNr==0)
+	    {
+	      cout << "CorrFunc0" << endl;
+	      outputKramersColor << so.corrFuncNr << " " << so.tau << " " << so.gamma/so.mass << " " <<  averageKramers << " " << variance << " " << ratio << endl;
+	    }
+	    else if(so.corrFuncNr==1)
+	    {
+	      cout << "CorrFunc1" << endl;
+	      outputKramersColor << so.corrFuncNr << " " << so.a << " " << so.gamma/so.mass << " " <<  averageKramers << " " << variance << " " << ratio << endl;
+	    }
+	    else
+	    {
+	      cout << "CorrFunc3" << endl;
+	      outputKramersColor << so.corrFuncNr << " " << 1.0/(so.alpha/sqrt(so.mass)) << " " << so.gamma/so.mass << " " <<  averageKramers << " " << variance << " " << ratio << endl;
+	    }
+	    outputKramersColor.close();   
+	  }
 	  }
 	
 	//-============================================================================

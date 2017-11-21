@@ -15,8 +15,8 @@ private:
 
 public:
 
+//   string inputfile;
 	string commentLine;
-
 	//physical settings
 	double k_b; // k_boltzmann constant
 	double mass; //mass of particle
