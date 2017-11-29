@@ -83,6 +83,9 @@ void SimulationOptions::setInitValues(){
 		stringstream(temp_string) >> this->xc;
 		getline(input,temp_string);
 		stringstream(temp_string) >> this->Ub;
+		getline(input,temp_string);
+		stringstream(temp_string) >> this->rxborder;
+
 // 		getline(input,temp_string);
 // 		stringstream(temp_string) >> this->testBool;
 // 		getline(input,temp_string);
@@ -389,7 +392,7 @@ void SimulationOptions::setInitValues(){
 	 {
 	   this->KramersRate = true;
        //this->dx=0.0;
-           this->rxborder =2.6*this->xc; //1.7 tail-Paper;//sqrt(2*this->potB_eff/abs(this->potK))+this->dx;
+  //         this->rxborder =2.6*this->xc; //1.7 tail-Paper;//sqrt(2*this->potB_eff/abs(this->potK))+this->dx;
 	   this->lxborder = -10000.0;           
 	   if(this->potNr==1 & this->potK==-1)
 	   {
@@ -397,7 +400,7 @@ void SimulationOptions::setInitValues(){
 	   }
 	 }break;
 	}
-	this->rxborder=2.6*this->xc;
+//	this->rxborder=2.6*this->xc;
 
 }
 

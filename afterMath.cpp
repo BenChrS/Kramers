@@ -488,14 +488,15 @@ void fluxLeftRight(vector <double>& vec,vector <double>& vec1,const double borde
 }
 
 //statistic of FluxPaper oder eigene Methode 
-void averageFluxLeftRight(vector<double>& vec, double& averageRate,double& variance)
+void averageFluxLeftRight(vector<double>& vec, double& averageRate,double& variance, const double& nSteps)
 {
   int i;
   int k=0; 
+  int l=0;
   averageRate = 0.0;
   variance=0.0;
-  
-  for(i=1200; i < vec.size(); i++) // bei t=25 hat der Fluss seine Grenzwert erreicht (nSteps=1000)
+  l=nSteps*0.6;
+  for(i=l; i < vec.size(); i++) // bei t=25 hat der Fluss seine Grenzwert erreicht (nSteps=1000)
   {
     averageRate += vec.at(i); 
     k += 1;
@@ -503,7 +504,7 @@ void averageFluxLeftRight(vector<double>& vec, double& averageRate,double& varia
   cout << k << endl;
   averageRate = averageRate/k; // Mittelung über alle verbleibenden 800 Zeitschritte
   
-  for(i=1200; i < vec.size();i++)
+  for(i=l; i < vec.size();i++)
   {
     variance +=  pow(vec.at(i)-averageRate,2.0);
   }
@@ -1023,11 +1024,11 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 	    
 	    if(so.Kramers==0)
 	    {
-	      averageFluxLeftRight(fluxPaperTotal, averageKramers,variance);  
+	      averageFluxLeftRight(fluxPaperTotal, averageKramers,variance,so.nSteps);  
 	    }
 	    else
 	    {
-	      averageFluxLeftRight(fluxTotal, averageKramers,variance); 
+	      averageFluxLeftRight(fluxTotal, averageKramers,variance,so.nSteps); 
 	    }
 	    
 	    writeToFile(results.tVec,fluxPaperTotal,filenames.fluxPaperTotal,headerString,foldernames.main);
@@ -1109,7 +1110,7 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 	  {
 	   fstream outputKramersMarkov;
 	   outputKramersMarkov.open("outputKramersMarkov.dat", ios::out | ios::app);
-	   outputKramersMarkov << so.gamma/so.mass << " " <<  averageKramers << " " << variance << " " << ratio << endl;
+	   outputKramersMarkov << so.Ub  << " " << so.dt <<  " " <<so.gamma/so.mass << " " <<  averageKramers << " " << variance << " " << ratio << " " << kramersTheo << " " << so.rxborder << endl;
 	   outputKramersMarkov.close();
 	  }
 	  else
@@ -1119,17 +1120,17 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 	    if(so.corrFuncNr==0)
 	    {
 	      cout << "CorrFunc0" << endl;
-	      outputKramersColor << so.corrFuncNr << " " << so.tau << " " << so.gamma/so.mass << " " <<  averageKramers << " " << variance << " " << ratio << endl;
+	      outputKramersColor << so.corrFuncNr << " " << so.tau << " " << so.Ub  << " " << so.dt <<  " " << so.gamma/so.mass << " " <<  averageKramers << " " << variance << " " << ratio <<" " << kramersTheo << " " << so.rxborder<<  endl;
 	    }
 	    else if(so.corrFuncNr==1)
 	    {
 	      cout << "CorrFunc1" << endl;
-	      outputKramersColor << so.corrFuncNr << " " << so.a << " " << so.gamma/so.mass << " " <<  averageKramers << " " << variance << " " << ratio << endl;
+	      outputKramersColor << so.corrFuncNr << " " << so.a << " " << so.Ub  << " " << so.dt <<  " " << so.gamma/so.mass << " " <<  averageKramers << " " << variance << " " << ratio <<" " << kramersTheo << " " << so.rxborder << endl;
 	    }
 	    else
 	    {
 	      cout << "CorrFunc3" << endl;
-	      outputKramersColor << so.corrFuncNr << " " << 1.0/(so.alpha/sqrt(so.mass)) << " " << so.gamma/so.mass << " " <<  averageKramers << " " << variance << " " << ratio << endl;
+	      outputKramersColor << so.corrFuncNr << " " << 1.0/(so.alpha/sqrt(so.mass)) << " " << so.Ub  << " " << so.dt <<  " " << so.gamma/so.mass << " " <<  averageKramers << " " << variance << " " << ratio <<" " << kramersTheo << " " << so.rxborder <<  endl;
 	    }
 	    outputKramersColor.close();   
 	  }
