@@ -76,7 +76,7 @@ int printWarning(SimulationOptions &so){
 	return 0;
 }
 
-int main(int argc, char** argv) {  //argc: 1, argv[0]: ./colnoise
+int main(int argc, char *argv[]) {  //argc: 1, argv[0]: ./colnoise
 	cout << currentDateTime() << endl;
   
 	string currentDateString = currentDateTime();
@@ -94,18 +94,21 @@ int main(int argc, char** argv) {  //argc: 1, argv[0]: ./colnoise
 // 	}
 	SimulationOptions so;
 	string JobName = argv[1];
-        string inputpath  = argv[2];
-        string evID = argv[3];
+        string inputFile  = argv[2];
+	string inputpath ="/home/schueller/Desktop/Kramers/build/"+inputFile ;
+	string D_str =argv[3];
+	double D_doub = atof( D_str.c_str() );
+	string evID = argv[4];
         int eventID = atoi( evID.c_str() );
-	string gamma_str = argv[4];
-	double gamma_doub = atof( gamma_str.c_str() );
+	so.readInput(argc,argv);
+	cout << "dt " << so.dt << " gamma " << so.gamma << endl; 
 	cout << "JobName      = " << JobName << endl;
-	cout << "Input Path   = " << inputpath << endl;
+	cout << "Input Path   = " << inputpath<< endl;
    
 	cout << "EventID      = " << eventID << endl;
-	cout << "Gamma        = " << gamma_doub << endl;
+	cout << "D        = " << D_doub << endl;
 
-	string outputspecification=JobName+"_G"+gamma_str+evID;
+	string outputspecification=JobName+"_D"+D_str+"_"+evID;
 	cout << outputspecification << endl;
 	
 	string outputpath;
@@ -120,14 +123,14 @@ int main(int argc, char** argv) {  //argc: 1, argv[0]: ./colnoise
 	else
 	{
 	  //make folder locally
-	  outputpath="~/Desktop/KramersNew/build/output/";    
+	  outputpath="/home/schueller/Desktop/Kramers/build/output/";    
 	}
 	cout << "Output Path  = " << outputpath << endl;
 //  	so.inputfile=argv[1];
 	cout << outputpath << " " << outputpath.c_str() << endl;
         Filenames filenames;
-//	Foldernames foldernames("test", so);
-  	Foldernames foldernames(currentDateString, so);
+	Foldernames foldernames("test", so);
+//  	Foldernames foldernames(currentDateString, so);
 
 	if (printWarning(so) == -1){
 		return -1;
@@ -195,16 +198,16 @@ int i;
 	}
 doAfterMath(filenames,foldernames,so, potential, results, noiseDiss, headerString,ksim);
 }
-//   fstream kramerstest;
-//   string kramersoutput=outputpath + "kramers-" + outputspecification + ".txt";
-//   kramerstest.open(kramersoutput.c_str(), std::ios::out);
-//   for(int i=0; i<so.nSteps; i++)
-//   {
-//     kramerstest << results.tVec.at(i) << " " << ksim.fluxPaperOut.at(i) << endl;
-//     cout << results.tVec.at(i) << " " << ksim.fluxPaperOut.at(i) << endl;
-//   }
-//   kramerstest.close();
-cout << outputpath << " " << outputpath.c_str() << endl;
+//   ofstream kramerstest;
+  string kramersoutput=outputpath + "Kramers-" + outputspecification + ".txt";
+  std::ofstream kramers;
+  kramers.open(kramersoutput.c_str(), std::ios::out | std::ios::trunc);
+  for(int i=0; i<so.nSteps; i++)
+  {
+    kramers << results.tVec.at(i) << " " << ksim.fluxPaperOut.at(i) << endl;
+  }
+  cout << "Output transferred to "+kramersoutput << endl;
+  kramers.close();
 cout << currentDateTime() << endl;
 return 0;
 }

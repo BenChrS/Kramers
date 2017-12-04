@@ -14,18 +14,18 @@ string existingFile(const string&, const string&);
 
 // writes all_t and all_y in data.size() columns in filename, the headerString is appended for file information
 int writeToFile(const vector<double>&, const vector< vector<double> >&,
-		 const string&, const string &headerString = "", const string &folderName = "", const bool &checkExistence = true, const int &precision = 5, const string &fileExtension = ".txt");
+		 const string&, const string &headerString = "", const string &folderName = "", const bool &checkExistence = false, const int &precision = 5, const string &fileExtension = ".txt");
 
 // writes tVec and data in different columns in filename, the headerString is appended for file information
 int writeToFile(const vector<double>&, const vector<double>&, const string&, const string &headerString = "",
-		const string &folderName = "", const int &precision = 5, const bool &checkExistence = true, const string &fileExtension = ".txt");
+		const string &folderName = "", const int &precision = 5, const bool &checkExistence = false, const string &fileExtension = ".txt");
 
 // writes tVec and data in different columns in filename, the headerString is appended for file information
-int writeToFile( const string&, const string& , const string &folderName = "",  const bool &checkExistence =true, const string &fileExtension = ".txt");
+int writeToFile( const string&, const string& , const string &folderName = "",  const bool &checkExistence =false, const string &fileExtension = ".txt");
 
-int writeInitValToFile(const SimulationOptions&,const string &fileName, const string &folderName= "",const bool &checkExistence = true, const string &fileExtension = ".txt");
+int writeInitValToFile(const SimulationOptions&,const string &fileName, const string &folderName= "",const bool &checkExistence = false, const string &fileExtension = ".txt");
 
-int writeInitValToFile1(const SimulationOptions&,const string &fileName, const string &folderName= "",const bool &checkExistence = true, const string &fileExtension = ".txt");
+int writeInitValToFile1(const SimulationOptions&,const string &fileName, const string &folderName= "",const bool &checkExistence = false, const string &fileExtension = ".txt");
 
 class Filenames{
 public:

@@ -15,7 +15,6 @@ private:
 
 public:
 
-//   string inputfile;
 	string commentLine;
 	//physical settings
 	double k_b; // k_boltzmann constant
@@ -160,7 +159,8 @@ public:
 
 
 	SimulationOptions();
-	void setInitValues();
+	void setInitValues(int argc, char *argv[]);
 	void setDependentVariables();
+	void readInput(int argc, char *argv[]);
 
  };

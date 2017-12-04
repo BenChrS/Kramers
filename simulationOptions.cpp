@@ -13,22 +13,25 @@
 
 using namespace std;
 
-SimulationOptions::SimulationOptions(){
-	setInitValues();
-	setDependentVariables();
-}
-
-void SimulationOptions::setInitValues(){
-	this->commentLine = "Standard_5.0";
-        
-	
-	//input parameters
-	
+ SimulationOptions::SimulationOptions(){
+ 	
+//  	setInitValues();
+//  	setDependentVariables();
+ }
+void SimulationOptions::readInput(int argc, char *argv[])
+	{
+	  
+	  
+	  
+	  
+	//input parameters	
 	string temp_string;
+	string inputFile  = argv[2];
+	string inputpath ="/home/schueller/Desktop/Kramers/build/"+inputFile ;
 	// read from file:
 	ifstream input;
-// 	input.open( inputfile.c_str() );
-	input.open("input.txt");
+ 	input.open( inputpath.c_str());
+// 	input.open("input.txt");
 		getline(input,temp_string);
 		stringstream(temp_string) >> this->tEnd;
 		getline(input,temp_string);
@@ -43,8 +46,8 @@ void SimulationOptions::setInitValues(){
 // 		stringstream(temp_string) >> this->chi;
  		getline(input,temp_string);
  		stringstream(temp_string) >> this->potw;
-  		getline(input,temp_string);
- 		stringstream(temp_string) >> this->D;
+//   		getline(input,temp_string);
+//  		stringstream(temp_string) >> this->D;
  		getline(input,temp_string);
  		stringstream(temp_string) >> this->temperature;
 // 		getline(input,temp_string);
@@ -99,11 +102,19 @@ void SimulationOptions::setInitValues(){
 		//getline(input,temp_string);
 		//stringstream(temp_string) >> this->potNy;
 	input.close();
+	
+	setInitValues(argc,argv);
+	setDependentVariables();  
+	}
+void SimulationOptions::setInitValues(int argc, char *argv[]){
+	this->commentLine = "Standard_5.0";
+        
 	//physical settings
 	this->k_b = 1; // k_boltzmann constant
 	//this->temperature = 1.0; //2.0
 	//this->mass =40.0/(25.0*6*6);//1.0;//0.1;//0.1*this->temperature;//1.0/16.0*this->temperature; //1.0; //mass of particle
-	//this->D =2.0;//0.075/4.0;//0.075/4.0;//1.0;//6.0; //note: shouldn't influence evolution related to correlation function 3
+	string D_str =argv[3];
+	this->D =atof( D_str.c_str() );
         //this->tau = 1.0/5.0; // see paper /only important for first correlation function
 	//this->a = 7.6; // only important for second correlation function
 	this->chi=3.5;//correlation time for third correlation function
@@ -179,7 +190,7 @@ void SimulationOptions::setInitValues(){
 			//alpha=sqrt(mass) für alpha'=1 , alpha' ist inverse Korrelationszeit
 	this->timeSettled = (this->tEnd-this->t0)/3.0; //approximate time particles need to be in equilibrium - only impo		
 	this->minAlpha=-this->alpha*this->alpha/4.0*exp(-2.0);  //Minimum des Kernels
-	cout << "minAlpha " << minAlpha << endl;
+// 	cout << "minAlpha " << minAlpha << endl;
 	
 	
 // 	this->mass = this->Ub/2.0; // Test für Skalierungsverhalten Ub/m=2
@@ -233,26 +244,26 @@ void SimulationOptions::setInitValues(){
 	p = beta/time-om*om-1.0/(3.0*time*time);
 	q = 2.0/(27.0*pow(time,3.0))-1.0/(3.0*time)*(beta/time-om*om)-om*om/time;
 	
-	cout << "p: " << p << " " << "q: " << q << endl;
+	//cout << "p: " << p << " " << "q: " << q << endl;
 	 
-	cout << "tau: " << time << " " << "wc: " << this->potw << " " << "gamma: " << this->gamma << " " << "beta: " 
-	     << beta <<  endl;
+	//cout << "tau: " << time << " " << "wc: " << this->potw << " " << "gamma: " << this->gamma << " " << "beta: " 
+	//     << beta <<  endl;
 	 
 	 //Eigenwerte für inverses harmonisches Potenzial
 	 double a,ny,my,d,u,v;
 	 a=1.0/(3.0*time);
 	 //cout << "a" << " " <<a << endl;
 	 ny=-1.0+3.0*beta*time-3.0*pow((this->potw*time),2.0);
-	 cout << "ny" << " " <<ny << endl;
+// 	 cout << "ny" << " " <<ny << endl;
 	 my=-1.0+9.0/2.0*beta*time+9.0*pow((this->potw*time),2.0);
-	 cout << "my" << " " <<my << endl;
+// 	 cout << "my" << " " <<my << endl;
 	 
 	 diskr =  my*my+pow(ny,3.0);
-	 cout << "diskr: " << diskr << endl;
+// 	 cout << "diskr: " << diskr << endl;
 	 d=sqrt(pow(my,2.0)+pow(ny,3.0));
-	 cout << "d" << " " <<d << endl;
+// 	 cout << "d" << " " <<d << endl;
 	 u=cbrt(my+d);
-	 cout << u << " " << v << endl;
+// 	 cout << u << " " << v << endl;
 	 v=cbrt(my-d);
 	 
 	 if(diskr>0)
@@ -260,27 +271,27 @@ void SimulationOptions::setInitValues(){
 	  this->aColoured=-a+a*u+a*v; //eingevalue for coloured noise 
 	  this->bColoured=-1.0/2.0*(1/time+this->aColoured);
 	  this->cColoured=-1.0/2.0*(1/time+this->aColoured);
-	  cout << "l1 " << this->aColoured << endl;
-	  cout << "l2 " << this->bColoured << endl;
-	  cout << "l3 " << this->cColoured << endl;
+// 	  cout << "l1 " << this->aColoured << endl;
+// 	  cout << "l2 " << this->bColoured << endl;
+// 	  cout << "l3 " << this->cColoured << endl;
 	 }
 	 else if(diskr==0)
 	 {
 	  this->aColoured = 3.0*q/p - a;
 	  this->bColoured = -3.0*q/(2.0*p)-a;
 	  this->cColoured = -3.0*q/(2.0*p)-a;
-	  cout << "l1 " << this->aColoured << endl;
-	  cout << "l2 " << this->bColoured << endl;
-	  cout << "l3 " << this->cColoured << endl;
+// 	  cout << "l1 " << this->aColoured << endl;
+// 	  cout << "l2 " << this->bColoured << endl;
+// 	  cout << "l3 " << this->cColoured << endl;
 	 }
 	 else
 	 {
 	  this->aColoured = sqrt(-4.0/3.0*p)*cos(1.0/3.0*acos(-q/2.0*sqrt(-27.0/pow(p,3.0))))-a;
 	  this->bColoured = -sqrt(-4.0/3.0*p)*cos(1.0/3.0*acos(-q/2.0*sqrt(-27.0/pow(p,3.0)))+M_PI/3.0)-a;
 	  this->cColoured = -sqrt(-4.0/3.0*p)*cos(1.0/3.0*acos(-q/2.0*sqrt(-27.0/pow(p,3.0)))-M_PI/3.0)-a;
-	  cout << "l1 " << this->aColoured << endl;
-	  cout << "l2 " << this->bColoured << endl;
-	  cout << "l3 " << this->cColoured << endl;
+// 	  cout << "l1 " << this->aColoured << endl;
+// 	  cout << "l2 " << this->bColoured << endl;
+// 	  cout << "l3 " << this->cColoured << endl;
 	   
 	}
       }
@@ -297,7 +308,7 @@ void SimulationOptions::setInitValues(){
     { //Berechnung der Anfangsgeschwindigkeit über die entsprechenden Eigenwerte 
 	if(this->potNr==1 & this->potK<0 & this->transition==false)
 	{
-	  cout << potK  << " " << "..." << endl;
+// 	  cout << potK  << " " << "..." << endl;
 	  this->x0 = -1;	
 	  this->potB1 = 0.5*this->mass*pow(this->potw,2)*pow(this->x0,2); // height of the inverse harmonic function to be overcome by the particle
 	  this->temperature = this->potB1/2; // setze Temperatur mit Höhe des Potenzials in Verbindung um zu gewährleisten, dass T auf jeden Fall kleiner ist als Schwelle !
@@ -310,7 +321,7 @@ void SimulationOptions::setInitValues(){
 	  
 	  else if(this->noiseNr==2)
 	  {
-	    cout << "noiseNr==2" << endl;
+// // 	    cout << "noiseNr==2" << endl;
 	    double time;
 	  
 	    time=this->tau;
@@ -409,17 +420,17 @@ void SimulationOptions::setInitValues(){
 void SimulationOptions::setDependentVariables(){
 this->dt = (tEnd-t0)/((double)nSteps);
  //this->dt = (10*xc)/((double)nSteps); //mit passendem Skalierungsverhalten für Pot 7
-cout << "dt " << dt << " mass " << mass << endl;
+// cout << "dt " << dt << " mass " << mass << endl;
 
   //----prepare simulations----
 
 this->gamma = this->D/(2.0*this->k_b*this->temperature);
-cout << "gamma/m: " << this->gamma/this->mass << endl;
+// cout << "gamma/m: " << this->gamma/this->mass << endl;
 this->nSettling = pow(2,ceil(log2(this->tSettling/this->dt))); //must be at least as high as I(t) needs to be at approximately 0
-cout <<" nSettling " << this->nSettling << endl; 
+// cout <<" nSettling " << this->nSettling << endl; 
 this->nFourier =this->nSettling*pow(2, 1); // must be larger than nSettling to avoid boundary
 					//  effects of the FFT and be a power of 2 for the FFT
-cout << "nFourier " << this->nFourier << endl;
+// cout << "nFourier " << this->nFourier << endl;
 }
 
 
