@@ -46,6 +46,7 @@ public:
 	vector<vector<double> > fluxPositiveAvVec;
 	vector<vector<double> > fluxNegativeAvVec;
 	vector<vector<double> > fluxPaperAvVec;
+	vector<double> fluxPaperOut;
 	vector<vector<double> > kinEnergyAvVec;
 	vector< vector< vector<double> > > pDistAvVec;
 	vector< vector< vector<double> > > vDistAvVec;

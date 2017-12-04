@@ -1016,6 +1016,7 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 	    writeToFile(results.tVec,fluxNegativeTotal,filenames.fluxNegativeTotal,headerString,foldernames.main);
 	    
 	    buildAverage(fluxPaperTotal,ksim.fluxPaperAvVec);
+	    ksim.fluxPaperOut=fluxPaperTotal;
 	    for(int a=0;a<fluxPaperTotal.size();a++)
 	    {
 	      if(fluxPaperTotal.at(a)<0){

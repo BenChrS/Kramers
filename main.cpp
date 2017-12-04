@@ -19,6 +19,7 @@
 #include <sstream>
 #include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
+#include <string>
 #include <string.h>
 #include <numeric>
 #include <complex>
@@ -82,7 +83,7 @@ int main(int argc, char** argv) {  //argc: 1, argv[0]: ./colnoise
 	stringstream headerStringStream;
 	headerStringStream << "# " << currentDateString;
 	string headerString = headerStringStream.str();
-
+	
 	//----Variable settings----
 	const string versionNr = "5.0";
 	
@@ -92,7 +93,38 @@ int main(int argc, char** argv) {  //argc: 1, argv[0]: ./colnoise
 // 	 return -1;
 // 	}
 	SimulationOptions so;
+	string JobName = argv[1];
+        string inputpath  = argv[2];
+        string evID = argv[3];
+        int eventID = atoi( evID.c_str() );
+	string gamma_str = argv[4];
+	double gamma_doub = atof( gamma_str.c_str() );
+	cout << "JobName      = " << JobName << endl;
+	cout << "Input Path   = " << inputpath << endl;
+   
+	cout << "EventID      = " << eventID << endl;
+	cout << "Gamma        = " << gamma_doub << endl;
+
+	string outputspecification=JobName+"_G"+gamma_str+evID;
+	cout << outputspecification << endl;
+	
+	string outputpath;
+     
+        char * csc_check_loewe = getenv("SLURM_JOB_ID");
+        if( csc_check_loewe != NULL )
+        { 
+	  string jobID( csc_check_loewe );
+	  outputpath = "/local/" + jobID + "/";
+	  cout << "Use loewe folder" << outputpath << std::endl;
+	}
+	else
+	{
+	  //make folder locally
+	  outputpath="~/Desktop/KramersNew/build/output/";    
+	}
+	cout << "Output Path  = " << outputpath << endl;
 //  	so.inputfile=argv[1];
+	cout << outputpath << " " << outputpath.c_str() << endl;
         Filenames filenames;
 //	Foldernames foldernames("test", so);
   	Foldernames foldernames(currentDateString, so);
@@ -133,10 +165,7 @@ int main(int argc, char** argv) {  //argc: 1, argv[0]: ./colnoise
 
 	//----actual simulations----
 
-if(so.avOpt==true && so.testBool==false)  // wichtig: BEACHTE so.avOpt==true !!
-{
-  cout << "first loop" << endl;
-  int j;
+int j;
 for(j=0;j<so.avNum;j++)
 {
   printf("%.0f %%\n", (double)(j*100)/so.avNum);
@@ -166,56 +195,16 @@ int i;
 	}
 doAfterMath(filenames,foldernames,so, potential, results, noiseDiss, headerString,ksim);
 }
-}
-//===============================================================================================
-else
-{
-    if(so.potNr==1 &&  so.initCondNr==0 && so.transition==true)
-	{
-	cout << "transition loop" << endl;
-	double dE_kin= 3.0/so.npoints;
-	double E_kin = 0.0;
-	double v0 = 0.0;
-	int n;
-    for(n=0;n<=so.npoints;n++)
-	{
-	  printf("%.0f %%\n", (double)(n*100)/(so.npoints+1));
-		ksim.indexNr = n;
-		E_kin += dE_kin;
-		v0 = sqrt((2*(E_kin))/so.mass);
-	int i;
-	#pragma omp parallel for default(shared) private(i) // Parallelization of the particle loop with OpenMP
-	for (i = 0; i < so.np; i++)
-	{
-		//usr information and percentage done
-		if ((i == 0) && (!omp_get_thread_num()))
-		  printf("working together with %d threads\n", omp_get_num_threads());
-		//if (i % (int)ceil((max(double(so.np)/omp_get_num_threads()/100.0, 1.0))) == 0 && !omp_get_thread_num())
-		  //printf("%.0f %%\n", (double)(i*omp_get_num_threads()*100)/so.np);
-
-		//calculate noise
-		noiseDiss.noiseFunc(so.dt, noiseDiss.randGen.at(omp_get_thread_num()), noiseDiss.allNoise.at(i));
-
-		// calculate all steps
-		sdeSolver.sdeSolverFunc(results.tVec, results.x0Vec.at(i), results.v0Vec.at(i), so.mass,noiseDiss.allNoise.at(i), results.allX.at(i), results.allV.at(i), potential.forceFunc);
-	}
-	//----saveAllData----
-	if (so.saveAllDataBool)
-	{
-		writeToFile(results.tVec, results.allX, filenames.allX, headerString, foldernames.main);
-		writeToFile(results.tVec, results.allX, filenames.allVeloc, headerString, foldernames.main);
-	}
-
-	doAfterMath(filenames,foldernames,so, potential, results, noiseDiss, headerString, ksim);
-	fill(results.v0Vec.begin(), results.v0Vec.end(), v0);
-	}
-	writeToFile(ksim.kappa,ksim.transition,filenames.kappaTransprob, headerString,foldernames.main);
-	
-	}
-
-
-writeToFile(results.tVec, results.v0Vec,filenames.test, headerString,foldernames.main);
-}
+//   fstream kramerstest;
+//   string kramersoutput=outputpath + "kramers-" + outputspecification + ".txt";
+//   kramerstest.open(kramersoutput.c_str(), std::ios::out);
+//   for(int i=0; i<so.nSteps; i++)
+//   {
+//     kramerstest << results.tVec.at(i) << " " << ksim.fluxPaperOut.at(i) << endl;
+//     cout << results.tVec.at(i) << " " << ksim.fluxPaperOut.at(i) << endl;
+//   }
+//   kramerstest.close();
+cout << outputpath << " " << outputpath.c_str() << endl;
 cout << currentDateTime() << endl;
 return 0;
 }

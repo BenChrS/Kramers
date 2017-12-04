@@ -97,6 +97,7 @@ KappaSimulation::KappaSimulation(const SimulationOptions &so){
 	this->fluxPositiveAvVec.resize(so.avNum,vector<double>(so.nSteps, 0.0));
 	this->fluxNegativeAvVec.resize(so.avNum,vector<double>(so.nSteps, 0.0));
 	this->fluxPaperAvVec.resize(so.avNum,vector<double>(so.nSteps, 0.0));
+	this->fluxPaperOut.resize(so.nSteps,0.0);
 	this->kinEnergyAvVec.resize(so.avNum,vector<double>(so.nSteps, 0.0));
 	this->pDistAvVec.resize(so.avNum,vector< vector<double> >(ceil(double(so.nSteps)/double(so.pdaStride)),vector<double>(so.pDistNBins,0.0)));
 	this->vDistAvVec.resize(so.avNum,vector< vector<double> >(ceil(double(so.nSteps)/double(so.vdaStride)),vector<double>(so.vDistNBins,0.0)));
