@@ -98,7 +98,9 @@ int main(int argc, char *argv[]) {  //argc: 1, argv[0]: ./colnoise
 	string inputpath ="/home/schueller/Desktop/Kramers/build/"+inputFile ;
 	string D_str =argv[3];
 	double D_doub = atof( D_str.c_str() );
-	string evID = argv[4];
+	string corrTime = argv[4];
+	double corrTime_doub = atof( corrTime.c_str() );
+	string evID = argv[5];
         int eventID = atoi( evID.c_str() );
 	so.readInput(argc,argv);
 	cout << "dt " << so.dt << " gamma " << so.gamma << endl; 
@@ -108,7 +110,7 @@ int main(int argc, char *argv[]) {  //argc: 1, argv[0]: ./colnoise
 	cout << "EventID      = " << eventID << endl;
 	cout << "D        = " << D_doub << endl;
 
-	string outputspecification=JobName+"_D"+D_str+"_"+evID;
+	string outputspecification=JobName+"_D"+D_str+"_corrT"+corrTime+"_"+evID;
 	cout << outputspecification << endl;
 	
 	string outputpath;

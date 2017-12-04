@@ -38,10 +38,10 @@ void SimulationOptions::readInput(int argc, char *argv[])
 		stringstream(temp_string) >> this->nStepsFactor;
 		getline(input,temp_string);
 		stringstream(temp_string) >> this->nStepsTwo;
-		getline(input,temp_string);
-		stringstream(temp_string) >> this->tau;
-		getline(input,temp_string);
-		stringstream(temp_string) >> this->a;
+// 		getline(input,temp_string);
+// 		stringstream(temp_string) >> this->tau;
+// 		getline(input,temp_string);
+// 		stringstream(temp_string) >> this->a;
 // 		getline(input,temp_string);
 // 		stringstream(temp_string) >> this->chi;
  		getline(input,temp_string);
@@ -115,10 +115,11 @@ void SimulationOptions::setInitValues(int argc, char *argv[]){
 	//this->mass =40.0/(25.0*6*6);//1.0;//0.1;//0.1*this->temperature;//1.0/16.0*this->temperature; //1.0; //mass of particle
 	string D_str =argv[3];
 	this->D =atof( D_str.c_str() );
-        //this->tau = 1.0/5.0; // see paper /only important for first correlation function
-	//this->a = 7.6; // only important for second correlation function
-	this->chi=3.5;//correlation time for third correlation function
- 	//this->alpha=30.0*sqrt(this->mass); // correlation time for massless theory // Einheit Masse/Zeit alpha=sqrt(mass)*alpha' 
+	string corrTime=argv[4];
+        this->tau = atof( corrTime.c_str() ); // see paper /only important for first correlation function
+	this->a =atof( corrTime.c_str() ); // only important for second correlation function
+	this->chi=atof( corrTime.c_str() );//correlation time for third correlation function
+//  	this->alpha=30.0*sqrt(this->mass); // correlation time for massless theory // Einheit Masse/Zeit alpha=sqrt(mass)*alpha' 
 			//alpha=sqrt(mass) für alpha'=1 , alpha' ist inverse Korrelationszeit
 	this->minAlpha=-this->alpha*this->alpha/4.0*exp(-2.0);  //Minimum des Kernels
 	//cout << "minAlpha " << minAlpha << endl;
