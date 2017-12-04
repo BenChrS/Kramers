@@ -95,20 +95,13 @@ int main(int argc, char *argv[]) {  //argc: 1, argv[0]: ./colnoise
 	SimulationOptions so;
 	string JobName = argv[1];
         string inputFile  = argv[2];
-	string inputpath ="/home/schueller/Desktop/Kramers/build/"+inputFile ;
+	string inputpath;
 	string D_str =argv[3];
 	double D_doub = atof( D_str.c_str() );
 	string corrTime = argv[4];
 	double corrTime_doub = atof( corrTime.c_str() );
 	string evID = argv[5];
         int eventID = atoi( evID.c_str() );
-	so.readInput(argc,argv);
-	cout << "dt " << so.dt << " gamma " << so.gamma << endl; 
-	cout << "JobName      = " << JobName << endl;
-	cout << "Input Path   = " << inputpath<< endl;
-   
-	cout << "EventID      = " << eventID << endl;
-	cout << "D        = " << D_doub << endl;
 
 	string outputspecification=JobName+"_D"+D_str+"_corrT"+corrTime+"_"+evID;
 	cout << outputspecification << endl;
@@ -119,17 +112,25 @@ int main(int argc, char *argv[]) {  //argc: 1, argv[0]: ./colnoise
         if( csc_check_loewe != NULL )
         { 
 	  string jobID( csc_check_loewe );
+	  inputpath = "/scratch/nuclearmat/schueller/Langevin/Kramers/build"+inputFile;
 	  outputpath = "/local/" + jobID + "/";
 	  cout << "Use loewe folder" << outputpath << std::endl;
 	}
 	else
 	{
 	  //make folder locally
+	  inputpath ="/home/schueller/Desktop/Kramers/build/"+inputFile ;
 	  outputpath="/home/schueller/Desktop/Kramers/build/output/";    
 	}
+	
 	cout << "Output Path  = " << outputpath << endl;
-//  	so.inputfile=argv[1];
-	cout << outputpath << " " << outputpath.c_str() << endl;
+	so.readInput(argc,argv);
+	cout << "dt " << so.dt << " gamma " << so.gamma << endl; 
+	cout << "JobName      = " << JobName << endl;
+	cout << "Input Path   = " << inputpath<< endl;
+   
+	cout << "EventID      = " << eventID << endl;
+	cout << "D        = " << D_doub << endl;
         Filenames filenames;
 	Foldernames foldernames("test", so);
 //  	Foldernames foldernames(currentDateString, so);

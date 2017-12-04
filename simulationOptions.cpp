@@ -27,10 +27,10 @@ void SimulationOptions::readInput(int argc, char *argv[])
 	//input parameters	
 	string temp_string;
 	string inputFile  = argv[2];
-	string inputpath ="/home/schueller/Desktop/Kramers/build/"+inputFile ;
+	//string inputpath ="/home/schueller/Desktop/Kramers/build/"+inputFile ;
 	// read from file:
 	ifstream input;
- 	input.open( inputpath.c_str());
+ 	input.open( inputFile.c_str());
 // 	input.open("input.txt");
 		getline(input,temp_string);
 		stringstream(temp_string) >> this->tEnd;
