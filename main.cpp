@@ -112,7 +112,7 @@ int main(int argc, char *argv[]) {  //argc: 1, argv[0]: ./colnoise
         if( csc_check_loewe != NULL )
         { 
 	  string jobID( csc_check_loewe );
-	  inputpath = "/scratch/nuclearmat/schueller/Langevin/Kramers/build"+inputFile;
+	  inputpath = "/scratch/nuclearmat/schueller/Langevin/Kramers/build/"+inputFile;
 	  outputpath = "/local/" + jobID + "/";
 	  cout << "Use loewe folder" << outputpath << std::endl;
 	}
