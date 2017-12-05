@@ -109,11 +109,12 @@ int main(int argc, char *argv[]) {  //argc: 1, argv[0]: ./colnoise
 	string outputpath;
      
         char * csc_check_loewe = getenv("SLURM_JOB_ID");
+	//cout << csc_check_loewe << endl;
         if( csc_check_loewe != NULL )
         { 
 	  string jobID( csc_check_loewe );
 	  inputpath = "/home/nuclearmat/schueller/Langevin/Kramers/build/"+inputFile;
-	  outputpath = "/home/nuclearmat/schueller/Langevin/Kramers/build/local/";
+	  outputpath = "/home/nuclearmat/schueller/Langevin/Kramers/build/local/"+ jobID + "/";
 	  cout << "Use loewe folder" << outputpath << std::endl;
 	}
 	else
@@ -128,7 +129,6 @@ int main(int argc, char *argv[]) {  //argc: 1, argv[0]: ./colnoise
 	cout << "dt " << so.dt << " gamma " << so.gamma << endl; 
 	cout << "JobName      = " << JobName << endl;
 	cout << "Input Path   = " << inputpath<< endl;
-   
 	cout << "EventID      = " << eventID << endl;
 	cout << "D        = " << D_doub << endl;
         Filenames filenames;
