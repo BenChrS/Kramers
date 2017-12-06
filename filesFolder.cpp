@@ -239,6 +239,7 @@ string fileNameLong = "";
                 <<"T"<<" = "<<so.T<<endl
                 <<"rng"<<" = "<<so.res_rng<<endl
                 <<"seed"<<" = "<<so.seed<<endl
+                <<"seed1"<<" = "<<so.seed1<<endl
                 <<endl
                 <<"Initial conditions:"<<endl
                 <<"x0"<<" = "<<so.x0<<endl

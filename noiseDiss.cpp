@@ -354,7 +354,7 @@ NoiseDiss::NoiseDiss(SimulationOptions& so){
 		//todo ErrorMessage
 		break;
 	  }
-	  this->seed = time(NULL);
+	  this->seed = so.seed1;
 	  this->randGen.resize(so.maxThreadNumber);   //maxThreadNumber = 24
 	  initRandGen(this->seed, this->randGen);
 }

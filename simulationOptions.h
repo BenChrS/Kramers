@@ -96,7 +96,7 @@ public:
 	const gsl_rng_type * T;
 	gsl_rng * res_rng;
 	long seed;
-
+	long seed1;
 	//initial position and velocity distribution
 	int initCondNr;
 	double x0;

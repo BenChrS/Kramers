@@ -220,6 +220,9 @@ void SimulationOptions::setInitValues(int argc, char *argv[]){
     this->T= gsl_rng_default;
     this->res_rng=gsl_rng_alloc(T);
     this->seed=time(NULL);
+    string seed1_str=argv[5];
+    long seed1_lon=atol(seed1_str.c_str());
+    this->seed1=time(NULL)+seed1_lon;
 	
 
 	//initial conditions (x0, v0)
