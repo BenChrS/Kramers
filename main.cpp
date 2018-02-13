@@ -108,22 +108,22 @@ int main(int argc, char *argv[]) {  //argc: 1, argv[0]: ./colnoise
 	
 	string outputpath;
      
-        char * csc_check_loewe = getenv("SLURM_JOB_ID");
-	//cout << csc_check_loewe << endl;
-        if( csc_check_loewe != NULL )
-        { 
-	  string jobID( csc_check_loewe );
-	  outputpath = "/local/" + jobID + "/";
-	  inputpath = "/home/nuclearmat/schueller/Langevin/Kramers/build/"+inputFile;
-	  //outputpath = "/home/nuclearmat/schueller/Langevin/Kramers/build/local/";
-	  cout << "Use loewe folder" << outputpath << std::endl;
-	}
-	else
-	{
+//         char * csc_check_loewe = getenv("SLURM_JOB_ID");
+// 	//cout << csc_check_loewe << endl;
+//         if( csc_check_loewe != NULL )
+//         { 
+// 	  string jobID( csc_check_loewe );
+// 	  outputpath = "/local/" + jobID + "/";
+// 	  inputpath = "/home/nuclearmat/schueller/Langevin/Kramers/build/"+inputFile;
+// 	  //outputpath = "/home/nuclearmat/schueller/Langevin/Kramers/build/local/";
+// 	  cout << "Use loewe folder" << outputpath << std::endl;
+// 	}
+// 	else
+// 	{
 	  //make folder locally
 	  inputpath ="/home/schueller/Desktop/Kramers/build/"+inputFile ;
 	  outputpath="/home/schueller/Desktop/Kramers/build/output/";    
-	}
+//  	}
 	
 	cout << "Output Path  = " << outputpath << endl;
 	so.readInput(argc,argv);
@@ -133,8 +133,8 @@ int main(int argc, char *argv[]) {  //argc: 1, argv[0]: ./colnoise
 	cout << "EventID      = " << eventID << endl;
 	cout << "D        = " << D_doub << endl;
         Filenames filenames;
-	Foldernames foldernames("test", so);
-//  	Foldernames foldernames(currentDateString, so);
+//	Foldernames foldernames("test", so);
+  	Foldernames foldernames(currentDateString, so);
 
 	if (printWarning(so) == -1){
 		return -1;

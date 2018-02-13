@@ -108,7 +108,7 @@ vector<double> generateCorrFunc3(const double& t0, const double& dt, const int& 
   double t = t0;
   for (int i = 0; i < nSteps; i++)
   {
-    output.at(i) = k*temperature/4.0*pow(alpha,2.0)*(1-alpha/sqrt(mass)*t)*exp(-alpha/sqrt(mass)*t);
+    output.at(i) = D*k*temperature/4.0*pow(alpha,2.0)*(1-alpha/sqrt(mass)*t)*exp(-alpha/sqrt(mass)*t);
     t += dt;
   }
   return output;
@@ -152,7 +152,7 @@ vector<double> generateDissipationKernel(const int& nMax, const vector<double>& 
 	output.at(i) = 0.5/(k*temperature)*corrFunction.at(i);
 	i++;
       }
-      while (i <maxN && output.at(i-1)>=-0.001); //  muss an Minimum von Gamma angepasst werden \0.15 für \alpha=30
+      while (i <maxN && output.at(i-1)>=-0.0001); //  muss an Minimum von Gamma angepasst werden \0.15 für \alpha=30
       do
       {
 	output.at(i) = 0.5/(k*temperature)*corrFunction.at(i);

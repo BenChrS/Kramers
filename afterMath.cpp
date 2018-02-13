@@ -508,7 +508,7 @@ void averageFluxLeftRight(vector<double>& vec, double& averageRate,double& varia
   {
     variance +=  pow(vec.at(i)-averageRate,2.0);
   }
-  variance=sqrt(1.0/(k-1)*variance);
+  variance=1.0/sqrt(k)*sqrt(1.0/(k-1)*variance);
 }
 
 //KramersRate wie in Paper berechnet
@@ -1047,6 +1047,8 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 	    double kramersTheo1;
 	    double ratio;
 	    double kramersLowFric;
+	    double inverseKramersTurnover;
+	    double kramersTurnover;
 	    double a;
 	    double gammaFre;
 	    double omegaB=sqrt(4*so.Ub/(so.mass*pow((so.xb-so.xc),2.0)));
@@ -1075,12 +1077,15 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 	      
 	      kramersTheo = omegaC*so.aWhite/(2.0*M_PI*omegaB)*exp(-so.Ub/(so.k_b*so.temperature));
 	      kramersLowFric=so.gamma/so.mass*so.Ub/so.temperature*exp(-so.Ub/(so.k_b*so.temperature));
+	      inverseKramersTurnover=1.0/kramersTheo+1.0/kramersLowFric;
+	      kramersTurnover = 1.0/inverseKramersTurnover;
 	      cout << "Ub " << so.Ub << endl;
 	      cout << "dt " << so.dt << endl;
 	      cout << "beta*Ib " << so.gamma/so.mass*2*M_PI*so.Ub/so.potw << endl;
 	      cout << "kramersTheo " << kramersTheo  << endl;
 	      cout << "kramersNumAv " << averageKramers << " Varianz " << variance <<  endl;
 	      cout << "kramersTheoWeakFric " << kramersLowFric << endl;
+	      cout << "kramersTurnover " << kramersTurnover << endl; 
 	      if(so.gamma/so.mass*2*M_PI*so.Ub/so.potw<so.temperature)
 	      {
 		ratio=averageKramers/kramersLowFric;
@@ -1111,7 +1116,8 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 	  {
 	   fstream outputKramersMarkov;
 	   outputKramersMarkov.open("outputKramersMarkov.dat", ios::out | ios::app);
-	   outputKramersMarkov << so.Ub  << " " << so.dt <<  " " <<so.gamma/so.mass << " " <<  averageKramers << " " << variance << " " << ratio << " " << kramersTheo << " " << so.rxborder << endl;
+	   //outputKramersMarkov << so.Ub  << " " << so.dt <<  " " <<so.gamma/so.mass << " " <<  averageKramers << " " << variance << " " << ratio << " " << kramersTheo << " " << so.rxborder << endl;
+	   outputKramersMarkov << so.gamma/so.mass << " " <<  averageKramers << " " << variance << " " << ratio << " " << kramersTheo << " " << so.rxborder << endl;
 	   outputKramersMarkov.close();
 	  }
 	  else
@@ -1121,18 +1127,22 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 	    if(so.corrFuncNr==0)
 	    {
 	      cout << "CorrFunc0" << endl;
+	     // outputKramersColor << so.corrFuncNr << " " << so.tau << " " << so.Ub  << " " << so.dt <<  " " << so.gamma/so.mass << " " <<  averageKramers << " " << variance << " " << ratio <<" " << kramersTheo << " " << so.rxborder<<  endl;
 	      outputKramersColor << so.corrFuncNr << " " << so.tau << " " << so.Ub  << " " << so.dt <<  " " << so.gamma/so.mass << " " <<  averageKramers << " " << variance << " " << ratio <<" " << kramersTheo << " " << so.rxborder<<  endl;
+	      
 	    }
 	    else if(so.corrFuncNr==1)
 	    {
 	      cout << "CorrFunc1" << endl;
-	      outputKramersColor << so.corrFuncNr << " " << so.a << " " << so.Ub  << " " << so.dt <<  " " << so.gamma/so.mass << " " <<  averageKramers << " " << variance << " " << ratio <<" " << kramersTheo << " " << so.rxborder << endl;
+	      //outputKramersColor << so.corrFuncNr << " " << so.a << " " << so.Ub  << " " << so.dt <<  " " << so.gamma/so.mass << " " <<  averageKramers << " " << variance << " " << ratio <<" " << kramersTheo << " " << so.rxborder << endl;
+	      outputKramersColor << so.gamma/so.mass << " " <<  averageKramers << " " << variance << " " << ratio <<" " << kramersTheo << " " << so.rxborder << endl;   
 	    }
 	    else
 	    {
 	      cout << "CorrFunc3" << endl;
-	      outputKramersColor << so.corrFuncNr << " " << 1.0/(so.alpha/sqrt(so.mass)) << " " << so.Ub  << " " << so.dt <<  " " << so.gamma/so.mass << " " <<  averageKramers << " " << variance << " " << ratio <<" " << kramersTheo << " " << so.rxborder <<  endl;
-	    }
+// 	      outputKramersColor << so.corrFuncNr << " " << 1.0/(so.alpha/sqrt(so.mass)) << " " << so.Ub  << " " << so.dt <<  " " << so.gamma/so.mass << " " <<  averageKramers << " " << variance << " " << ratio <<" " << kramersTheo << " " << so.rxborder <<  endl;
+	      outputKramersColor << "D " << so.D <<  averageKramers << " " << variance << " " << ratio <<" " << kramersTheo << " " << so.rxborder <<  endl;
+	     	    }
 	    outputKramersColor.close();   
 	  }
 	  }
