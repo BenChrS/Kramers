@@ -111,7 +111,7 @@ public:
 	string vda;
 	string pda;
 
-	Foldernames(const string&, const SimulationOptions&);
+	Foldernames(const string&, const SimulationOptions&,int argc, char *argv[]);
 	void initFolder(const SimulationOptions&);
 	int createFolder(const string&);
 };

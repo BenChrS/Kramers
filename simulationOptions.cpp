@@ -127,7 +127,7 @@ void SimulationOptions::setInitValues(int argc, char *argv[]){
 	//statistical/program settings
  	this->t0 = 0.0; //time interval [t0, t1]
         //this->t1 = 10.0;     //1.0: für kb*T=0.5 Limes
-	this->tSettling = 5.5; // time needed for I(t) to be approximately 0
+	this->tSettling = 10.0; // time needed for I(t) to be approximately 0
 	//this->timeSettled = (this->t1-this->t0)/3.0; //approximate time particles need to be in equilibrium - only important for kinetic Energy Average - not yet in external call
         //this->nStepsFactor = 1;//round(this->t1-this->t0);
         //this->nStepsTwo =15;   //15: für kb*T=0.5 Limes
@@ -165,16 +165,16 @@ void SimulationOptions::setInitValues(int argc, char *argv[]){
 	this->potB = 2.0; //for potential 3
 	this->potC = -2.0; //for potential 3
 	this->pota = 1; //for potential 4 distance between minimum and maximum
-	this->potMy = 3; //for potential 4 potential height
-	this->potNy = -4; //for potential 4 height of right potential well    
+	this->potMy = 2.5; //for potential 4 potential height
+	this->potNy = -5; //for potential 4 height of right potential well    
 	this->potMax=(3*this->pota*this->potNy)/(8*(2*this->potMy-this->potNy)); // for potential 4 : x-wert des Maximums 
 	
-// 	cout << "max: " << this->potMax << endl;
-// 	cout << "A" << " " << -(-2*potMy+potNy)/(2*pow(pota,4.0)) << endl;
-//         cout << "B" << " " << -(potNy)/(4*pow(pota,3.0)) << endl;
-//         cout << "C" << " " << -(2*potMy-potNy)/(pow(pota,2.0)) << endl;
-//         cout << "D" << " " <<  (3*potNy)/(4*pota) << endl;
-//         cout << "E" << " " <<  potMy << endl;
+ 	cout << "max: " << this->potMax << endl;
+	cout << "A" << " " << -(-2*potMy+potNy)/(2*pow(pota,4.0)) << endl;
+        cout << "B" << " " << -(potNy)/(4*pow(pota,3.0)) << endl;
+        cout << "C" << " " << -(2*potMy-potNy)/(pow(pota,2.0)) << endl;
+        cout << "D" << " " <<  (3*potNy)/(4*pota) << endl;
+        cout << "E" << " " <<  potMy << endl;
 	
 	this->potStartDepth = 5; //for potential 5
 	this->potEndDepth = 0.5; //for potential 5
@@ -185,9 +185,16 @@ void SimulationOptions::setInitValues(int argc, char *argv[]){
 	//this->t1 =1.0; //1.0*this->xc; 
 	this->xb=1.6*this->xc;
 	//this->Ub=2.5;   // units of wc   //2.5*this->k_b*this->temperature;
+	if(this->potNr==7)
+	{
 	this->mass =4.0*this->Ub/(this->potw*this->potw*pow(0.6*this->xc,2.0));
+	}
+	else
+	{
+	 this->mass=0.1;
+	}
 	this->potK = pow(this->potw,2.0)*this->mass; //for potential1
-	this->alpha=5.0*sqrt(this->mass); // correlation time for massless theory // Einheit Masse/Zeit alpha=sqrt(mass)*alpha' 
+	this->alpha=30*sqrt(this->mass); // correlation time for massless theory // Einheit Masse/Zeit alpha=sqrt(mass)*alpha'  //a=30 für EkinAv
 			//alpha=sqrt(mass) für alpha'=1 , alpha' ist inverse Korrelationszeit
 	this->timeSettled = (this->tEnd-this->t0)/3.0; //approximate time particles need to be in equilibrium - only impo		
 	this->minAlpha=-this->alpha*this->alpha/4.0*exp(-2.0);  //Minimum des Kernels
@@ -231,7 +238,14 @@ void SimulationOptions::setInitValues(int argc, char *argv[]){
     // wähle Anfangsbedingungen für Vergleich mit paper oder beliebig
     if(this->paperBool==0)
     {
+      if(this->potNr==7)
+      {
       x0=1.0*this->xc;//0.0;
+      }
+      else
+      {
+      x0=0.0;
+      }
       v0=0.0;
       
       if(this->noiseNr==2)

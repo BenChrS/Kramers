@@ -132,9 +132,11 @@ int main(int argc, char *argv[]) {  //argc: 1, argv[0]: ./colnoise
 	cout << "Input Path   = " << inputpath<< endl;
 	cout << "EventID      = " << eventID << endl;
 	cout << "D        = " << D_doub << endl;
+	
+	//Generate files and folders
         Filenames filenames;
 //	Foldernames foldernames("test", so);
-  	Foldernames foldernames(currentDateString, so);
+  	Foldernames foldernames(currentDateString, so,argc,argv);
 
 	if (printWarning(so) == -1){
 		return -1;

@@ -1038,7 +1038,7 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 	//writeToFile(results.tVec,fluxPositive,filenames.fluxPositive,headerString,foldernames.main);
 	//writeToFile(results.tVec,fluxNegative,filenames.fluxNegative,headerString,foldernames.main);
 	
-	
+#ifdef KRAMERS
 	//=============================================kramers==========================================================
 	
 	  if(j==so.avNum-1)  //erst bei letztem Durchlauf ausgeben!
@@ -1148,7 +1148,7 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 	  }
 	
 	//-============================================================================
-	
+#endif
 	
 	
 	//============================================kinetic energy========================================
@@ -1192,14 +1192,16 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 					  (so.eDistRangeEnd-so.eDistRangeBeg)/so.eDistNBins, eDistT);
 	vector<double> allKinEnDist(so.vDistNBins);
 	vector<double> allKinEnDist1(so.vDistNBins);
-	fstream EnergyDist,EnergyDist1;
-        EnergyDist.open("kinEnergyDist.dat", ios::out);
-	EnergyDist1.open("kinEnergyDist1.dat", ios::out);
 	vector< vector<double> >  allKinEn(so.np, vector<double>(so.nSteps, 0.0));
 	for(int a=0;a<so.np;a++)
 	{
 	 calcKinEnergy(allKinEn.at(a),results.allV.at(a),so.mass); 
 	}
+	
+#ifdef KINEN
+	fstream EnergyDist,EnergyDist1;
+        EnergyDist.open("kinEnergyDist.dat", ios::out);
+	EnergyDist1.open("kinEnergyDist1.dat", ios::out);
 	for(int a=0; a<so.nSteps;a++)
 	{
 	 EnergyDist << a << " " << results.allV.at(0).at(a) << " " << 1.0/2.0*so.mass*results.allV.at(0).at(a)*results.allV.at(0).at(a) << " " << allKinEn.at(0).at(a) << endl;
@@ -1207,7 +1209,7 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 	}
 	EnergyDist.close();
 	EnergyDist1.close();
-	
+#endif	
 	calcvDistributionMean(allKinEnDist,allKinEnDist1, allKinEn, ceil((so.eDistStartTime-so.t0)/so.dt), so.nSteps, so.eDistRangeBeg, so.eDistRangeEnd, so.eDistNBins);
 	
 	if(so.edaBool==1)
@@ -1309,6 +1311,9 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 	//writeToFile(results.tVec,var,filenames.xSqrAvTotal,headerString,foldernames.main);
 	}
 	//buildAverage(xAv, results.allX);
+	writeToFile(results.tVec, results.allX.at(0), filenames.x, headerString, foldernames.main);
+	writeToFile(results.tVec, results.allX.at(1), filenames.x, headerString, foldernames.main);
+	writeToFile(results.tVec, results.allX.at(2), filenames.x, headerString, foldernames.main);
 	//writeToFile(results.tVec, xAv, filenames.xAv, headerString, foldernames.main);
 	//writeToFile(results.tVec, velocAv, filenames.velocAv, headerString, foldernames.main);
 	//writeToFile(results.tVec, xSqrAv, filenames.xSqrAv, headerString, foldernames.main);
@@ -1331,8 +1336,9 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 	buildAverage(vSqrAvTotal,ksim.vSquaredAvVec);
 	writeToFile(results.tVec,vSqrAvTotal,filenames.vSqrAvTotal,headerString,foldernames.main);
 	}
-	
-	
+	writeToFile(results.tVec,results.allV.at(0),filenames.veloc,headerString,foldernames.main);
+	writeToFile(results.tVec,results.allV.at(1),filenames.veloc,headerString,foldernames.main);
+	writeToFile(results.tVec,results.allV.at(2),filenames.veloc,headerString,foldernames.main);
 	
 	//====================================potential related=======================================
 	
@@ -1358,13 +1364,13 @@ void doAfterMath(const Filenames& filenames,const Foldernames& foldernames, cons
 	  //================
 	  vector<double> potEnergyAv(so.nSteps, 0.0);
 	  calcPotEnergyAv(potEnergyAv, results.allX, results.tVec, potential.potentialFunc);
-	  //writeToFile(results.tVec, potEnergyAv, filenames.potEnergyAv, headerString,foldernames.main);
+	  writeToFile(results.tVec, potEnergyAv, filenames.potEnergyAv, headerString,foldernames.main);
 
 	  //total energy
 	  //============
 	  vector<double> totalEnergyAv(so.nSteps, 0.0);
 	  add2Vec(totalEnergyAv, potEnergyAv, kinEnergyAv);
-	  //writeToFile(results.tVec, totalEnergyAv, filenames.totalEnergyAv, headerString, foldernames.main, 7);
+	  writeToFile(results.tVec, totalEnergyAv, filenames.totalEnergyAv, headerString, foldernames.main, 7);
 	}
 
 	//given potential

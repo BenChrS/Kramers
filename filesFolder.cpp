@@ -460,8 +460,18 @@ Filenames::Filenames(){
 
 }
 
-Foldernames::Foldernames(const string &mainFolderName, const SimulationOptions &so){
+Foldernames::Foldernames(const string &mainFolderName, const SimulationOptions &so,int argc, char *argv[]){
 	this->main = mainFolderName;
+	this->main.append("_Corr");
+	this->main.append(boost::lexical_cast<string>( so.corrFuncNr ));
+	this->main.append("_np");
+	this->main.append(boost::lexical_cast<string>( so.np ));
+	this->main.append("_D");
+	this->main.append(boost::lexical_cast<string>( so.D ));
+	this->main.append("_om");
+	this->main.append(boost::lexical_cast<string>( so.potw ));
+	this->main.append("_dt");
+	this->main.append(boost::lexical_cast<string>( so.dt ));
 	this->ea = this->main;
 	this->vda = this->main;
 	this->pda = this->main;
