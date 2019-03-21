@@ -77,7 +77,10 @@ int printWarning(SimulationOptions &so){
 }
 
 int main(int argc, char *argv[]) {  //argc: 1, argv[0]: ./colnoise
-	cout << currentDateTime() << endl;
+	cout << endl;
+	cout << "starting time : " << currentDateTime() << endl;
+	cout << "===============" << endl;
+	cout << endl;
   
 	string currentDateString = currentDateTime();
 	stringstream headerStringStream;
@@ -104,7 +107,7 @@ int main(int argc, char *argv[]) {  //argc: 1, argv[0]: ./colnoise
         int eventID = atoi( evID.c_str() );
 
 	string outputspecification=JobName+"_D"+D_str+"_corrT"+corrTime+"_"+evID;
-	cout << outputspecification << endl;
+	//cout << outputspecification << endl;
 	
 	string outputpath;
      
@@ -124,14 +127,21 @@ int main(int argc, char *argv[]) {  //argc: 1, argv[0]: ./colnoise
 	  inputpath ="/home/schueller/Desktop/Kramers/build/"+inputFile ;
 	  outputpath="/home/schueller/Desktop/Kramers/build/output/";    
 //  	}
-	
-	cout << "Output Path  = " << outputpath << endl;
+	  
 	so.readInput(argc,argv);
-	cout << "dt " << so.dt << " gamma " << so.gamma << endl; 
+	cout << "Input data" << endl;
+	cout << "===============================================================" << endl;
+	cout << "Output Path  = " << outputpath << endl;
 	cout << "JobName      = " << JobName << endl;
 	cout << "Input Path   = " << inputpath<< endl;
+	cout << "D            = " << D_doub << endl;
+	cout << "gamma        = " << so.gamma << endl;
+	cout << "corrtime     = " << corrTime_doub << endl;
 	cout << "EventID      = " << eventID << endl;
-	cout << "D        = " << D_doub << endl;
+	cout << "dt           = " << so.dt << endl; 
+	cout << "===============================================================" << endl;
+	cout << endl;
+	
 	
 	//Generate files and folders
         Filenames filenames;
@@ -214,7 +224,7 @@ doAfterMath(filenames,foldernames,so, potential, results, noiseDiss, headerStrin
   }
   cout << "Output transferred to "+kramersoutput << endl;
   kramers.close();
-cout << currentDateTime() << endl;
+cout << "ending time : " << currentDateTime() << endl;
 return 0;
 }
 

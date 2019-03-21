@@ -470,6 +470,8 @@ Foldernames::Foldernames(const string &mainFolderName, const SimulationOptions &
 	this->main.append(boost::lexical_cast<string>( so.D ));
 	this->main.append("_om");
 	this->main.append(boost::lexical_cast<string>( so.potw ));
+	this->main.append("_t1");
+	this->main.append(boost::lexical_cast<string>( so.tEnd ));
 	this->main.append("_dt");
 	this->main.append(boost::lexical_cast<string>( so.dt ));
 	this->ea = this->main;

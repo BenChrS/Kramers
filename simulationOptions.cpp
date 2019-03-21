@@ -169,13 +169,14 @@ void SimulationOptions::setInitValues(int argc, char *argv[]){
 	this->potNy = -5; //for potential 4 height of right potential well    
 	this->potMax=(3*this->pota*this->potNy)/(8*(2*this->potMy-this->potNy)); // for potential 4 : x-wert des Maximums 
 	
+#ifdef KRAMERS
  	cout << "max: " << this->potMax << endl;
 	cout << "A" << " " << -(-2*potMy+potNy)/(2*pow(pota,4.0)) << endl;
         cout << "B" << " " << -(potNy)/(4*pow(pota,3.0)) << endl;
         cout << "C" << " " << -(2*potMy-potNy)/(pow(pota,2.0)) << endl;
         cout << "D" << " " <<  (3*potNy)/(4*pota) << endl;
         cout << "E" << " " <<  potMy << endl;
-	
+#endif
 	this->potStartDepth = 5; //for potential 5
 	this->potEndDepth = 0.5; //for potential 5
 	this->potStartTime = 1.0; //for potential 5
